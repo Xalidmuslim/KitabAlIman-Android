@@ -1,4 +1,4 @@
-name: Build Kitab al-Iman v0.4.0
+name: Build Kitab al-Iman v0.5.0
 
 on:
   push:
@@ -44,8 +44,8 @@ jobs:
       - name: Test book preservation, quotes and navigation
         run: python3 -m unittest discover -s tests -v
 
-      - name: Prepare native v0.4.0 application
-        run: python3 -m scripts.build_iman_v4 --dest AndroidApp
+      - name: Prepare native v0.5.0 application
+        run: python3 -m scripts.build_iman_v5 --dest AndroidApp
 
       - name: Check transformed source and data
         run: |
@@ -75,6 +75,11 @@ jobs:
           assert 'compactFootnote: Boolean = false' in reader
           assert 'val sourceStart: Int = 0' in reader
           assert 'fontSize = if (centeredTitle) 16.5.sp else 16.sp' in screens
+          assert 'fontSize = 15.sp' in screens
+          assert 'TextAlign.Start' in screens
+          assert 'Modifier.size(38.dp)' in screens
+          assert 'TextAlign.Center' in reader
+          assert '21 else 24' in reader
           assert (src.parent.parent.parent/'test/java/com/xalid/meditsinaproroka/nativeapp/ImanReaderV4Test.kt').is_file() or (root/'app/src/test/java/com/xalid/meditsinaproroka/nativeapp/ImanReaderV4Test.kt').is_file()
           assert 'PageHeader("Оглавление"' in screens
           assert 'NavItem("Оглавление"' in app
@@ -117,7 +122,7 @@ jobs:
       - name: Publish installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.4.0-Release-APK
+          name: KitabAlIman-v0.5.0-Release-APK
           path: AndroidApp/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 7
