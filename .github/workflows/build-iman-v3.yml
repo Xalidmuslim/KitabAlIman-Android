@@ -1,0 +1,110 @@
+name: Build Kitab al-Iman v0.3.0
+
+on:
+  push:
+    branches:
+      - main
+      - codex/iman-reader-ui-20261106
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout Kitab al-Iman
+        uses: actions/checkout@v4
+
+      - name: JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Gradle 8.11.1
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+
+      - name: Android SDK
+        run: |
+          set -euo pipefail
+          SDK=/usr/local/lib/android/sdk
+          echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
+          echo "$SDK/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
+          "$SDK/cmdline-tools/latest/bin/sdkmanager" --version
+          "$SDK/cmdline-tools/latest/bin/sdkmanager" 'platforms;android-36' 'build-tools;36.0.0'
+
+      - name: Test book preservation, quotes and navigation
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Prepare native v0.3.0 application
+        run: python3 -m scripts.build_iman_v3 --dest AndroidApp
+
+      - name: Check transformed source and data
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          root = Path('AndroidApp')
+          book = json.loads((root/'app/src/main/assets/book.json').read_text(encoding='utf-8'))
+          blocks = [b for c in book['chapters'] for b in c['blocks']]
+          assert len(book['chapters']) == 131
+          assert len(blocks) == 1795
+          assert sum(b['type']=='footnote' for b in blocks) == 242
+          assert sum(b['type']=='verse' for b in blocks) == 3
+          assert sum(b['type']=='hadith' for b in blocks) >= 15
+          assert all(not c['section'] for c in book['chapters'])
+          assert not any(b['type']=='quran' for b in blocks)
+          src = root/'app/src/main/java/com/xalid/meditsinaproroka/nativeapp'
+          reader=(src/'Reader.kt').read_text(encoding='utf-8')
+          screens=(src/'Screens.kt').read_text(encoding='utf-8')
+          app=(src/'App.kt').read_text(encoding='utf-8')
+          home=(src/'AntiqueDesign.kt').read_text(encoding='utf-8')
+          menu=(src/'WebDesign.kt').read_text(encoding='utf-8')
+          assert 'sameChapterHeading(chapter.title, block.text)' in reader
+          assert 'FaithSourceCard(chapter, block, store)' in reader
+          assert 'PageHeader("Оглавление"' in screens
+          assert 'NavItem("Оглавление"' in app
+          assert 'Route.Treatments' not in home
+          assert 'antique_mortar_detail' not in home
+          assert 'antique_remedies_detail' not in home
+          assert 'Route.Treatments' not in menu
+          assert 'Route.Remedies' not in menu
+          assert not list((root/'app/src/main').rglob('*.pdf'))
+          print('PASS: 131 chapters, 242 footnotes, compact contents, no medical links or PDF')
+          PY
+
+      - name: Native unit tests
+        working-directory: AndroidApp
+        run: gradle :app:testDebugUnitTest --no-daemon --stacktrace
+
+      - name: Release APK with R8
+        working-directory: AndroidApp
+        run: gradle :app:assembleRelease --no-daemon --stacktrace
+
+      - name: Verify APK signature and embedded text
+        run: |
+          set -euo pipefail
+          APK=AndroidApp/app/build/outputs/apk/release/app-release.apk
+          test -s "$APK"
+          unzip -t "$APK" >/dev/null
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose "$APK"
+          if unzip -Z1 "$APK" | grep -Ei '\.pdf$'; then
+            echo 'ERROR: PDF file bundled in APK'
+            exit 1
+          fi
+          unzip -p "$APK" assets/book.json | cmp - AndroidApp/app/src/main/assets/book.json
+          "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$APK" | grep '^package:'
+          sha256sum "$APK"
+
+      - name: Publish installable APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: KitabAlIman-v0.3.0-Release-APK
+          path: AndroidApp/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+          retention-days: 7
