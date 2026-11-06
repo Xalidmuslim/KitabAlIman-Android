@@ -34,10 +34,11 @@ replacement_one = """def one(src: str, old: str, new: str, label: str) -> str:
     if label in ('font size footnote', 'footnote leading'):
         marker = '@Composable\\nprivate fun SelectableNativeText('
         position = src.index(marker)
-        prefix, body = src[:position], src[position:]
+        end = src.index('@Composable\\nfun SettingsScreen(', position)
+        prefix, body, suffix = src[:position], src[position:end], src[end:]
         if body.count(old) != 1:
-            raise RuntimeError(f'Unexpected scoped {label}: found {body.count(old)}')
-        return prefix + body.replace(old, new, 1)
+            raise RuntimeError(f'Unexpected selectable-only {label}: found {body.count(old)}')
+        return prefix + body.replace(old, new, 1) + suffix
     if src.count(old) != 1:
         raise RuntimeError(f'Unexpected {label}: expected one anchor, got {src.count(old)}')
     return src.replace(old, new, 1)"""
