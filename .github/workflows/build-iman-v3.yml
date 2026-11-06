@@ -87,6 +87,10 @@ jobs:
           print('PASS: 131 chapters, 242 footnotes, compact contents, no medical links or PDF')
           PY
 
+      - name: Kotlin excerpt for precise diagnostics
+        run: |
+          nl -ba AndroidApp/app/src/main/java/com/xalid/meditsinaproroka/nativeapp/Reader.kt | sed -n '120,210p'
+
       - name: Native unit tests
         working-directory: AndroidApp
         run: gradle :app:testDebugUnitTest --no-daemon --stacktrace
