@@ -24,6 +24,27 @@ changes = (
 for old, new in changes:
     assert s.count(old) == 1, f"Unexpected source revision: {old}"
     s = s.replace(old, new, 1)
+# Scope typography changes to the SelectableNativeText UI: upstream Reader
+# contains another setTextSize/setLineSpacing call in an unrelated component.
+original_one = """def one(src: str, old: str, new: str, label: str) -> str:
+    if src.count(old) != 1:
+        raise RuntimeError(f'Unexpected {label}: expected one anchor, got {src.count(old)}')
+    return src.replace(old, new, 1)"""
+replacement_one = """def one(src: str, old: str, new: str, label: str) -> str:
+    if label in ('font size footnote', 'footnote leading'):
+        marker = '@Composable\\nprivate fun SelectableNativeText('
+        position = src.index(marker)
+        prefix, body = src[:position], src[position:]
+        if body.count(old) != 1:
+            raise RuntimeError(f'Unexpected scoped {label}: found {body.count(old)}')
+        return prefix + body.replace(old, new, 1)
+    if src.count(old) != 1:
+        raise RuntimeError(f'Unexpected {label}: expected one anchor, got {src.count(old)}')
+    return src.replace(old, new, 1)"""
+assert s.count(old) == 0 if False else True
+assert s.count(original_one) == 1, "Original verified helper moved"
+s = s.replace(original_one, replacement_one, 1)
+
 target = root / "scripts/build_iman_v4.py"
 target.write_text(s, encoding="utf-8")
 print("Unpacked verified v0.4 reader adapter:", target, len(s), "characters")
