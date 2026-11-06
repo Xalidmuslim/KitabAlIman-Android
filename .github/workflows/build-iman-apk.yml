@@ -32,7 +32,8 @@ jobs:
           set -euo pipefail
           echo "ANDROID_HOME=${ANDROID_HOME:-/usr/local/lib/android/sdk}" >> "$GITHUB_ENV"
           echo "${ANDROID_HOME:-/usr/local/lib/android/sdk}/cmdline-tools/latest/bin" >> "$GITHUB_PATH"
-          sdkmanager --version
+          SDK=${ANDROID_HOME:-/usr/local/lib/android/sdk}
+          "$SDK/cmdline-tools/latest/bin/sdkmanager" --version
 
       - name: Install Android API 36
         run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
