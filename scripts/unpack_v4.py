@@ -46,6 +46,12 @@ assert s.count(old) == 0 if False else True
 assert s.count(original_one) == 1, "Original verified helper moved"
 s = s.replace(original_one, replacement_one, 1)
 
+# Keep the conditional padding expression balanced in the Compose card.
+wrong_padding = """'Modifier.fillMaxWidth().padding(vertical = if (block.type == "footnote") 2.dp else 5.dp'"""
+right_padding = """'Modifier.fillMaxWidth().padding(vertical = if (block.type == "footnote") 2.dp else 5.dp)'"""
+assert s.count(wrong_padding) == 1, "Footnote patch unexpectedly changed"
+s = s.replace(wrong_padding, right_padding, 1)
+
 target = root / "scripts/build_iman_v4.py"
 target.write_text(s, encoding="utf-8")
 print("Unpacked verified v0.4 reader adapter:", target, len(s), "characters")
