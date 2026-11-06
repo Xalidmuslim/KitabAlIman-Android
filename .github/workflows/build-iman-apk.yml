@@ -63,7 +63,19 @@ jobs:
             echo 'ERROR: PDF found in the APK'
             exit 1
           fi
-          unzip -p "$APK" assets/book.json | cmp - assets/book.json
+          unzip -p "$APK" assets/book.json | cmp - AndroidApp/app/src/main/assets/book.json
+          python3 - <<'PY'
+          import json, pathlib
+          book = json.loads(pathlib.Path('AndroidApp/app/src/main/assets/book.json').read_text(encoding='utf-8'))
+          blocks = [block for chapter in book['chapters'] for block in chapter['blocks']]
+          assert len(book['chapters']) == 131
+          assert len(blocks) == 1795
+          assert sum(block['type'] == 'footnote' for block in blocks) == 242
+          assert not any(block['type'] == 'quran' for block in blocks)
+          for ref in ('3:102', '4:1', '33:70–71'):
+              assert any('[' + ref + ']' in block['text'] for block in blocks)
+          print('PASS: Only Russian Quran translations, 242 footnotes, 131 chapters')
+          PY
           "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$APK" | grep '^package:'
           sha256sum "$APK"
 

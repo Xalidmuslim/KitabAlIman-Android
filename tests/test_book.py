@@ -45,5 +45,60 @@ class BookStructureTests(unittest.TestCase):
         self.assertNotIn("PdfRenderer", source)
 
 
+class BookDisplayRegressionTests(unittest.TestCase):
+    def test_russian_only_verses_keep_original_text_anchors(self):
+        from scripts.assemble_app import russian_quran_only
+        prepared = russian_quran_only(BOOK)
+        original_blocks = {b["id"]: b for c in BOOK["chapters"] for b in c["blocks"]}
+        output = [b for c in prepared["chapters"] for b in c["blocks"]]
+        self.assertEqual(1795, len(output))
+        self.assertEqual(0, sum(b["type"] == "quran" for b in output))
+        self.assertEqual(242, sum(b["type"] == "footnote" for b in output))
+        self.assertEqual(1795, prepared["stats"]["blocks"])
+        for block in output:
+            self.assertEqual(original_blocks[block["id"]], block)
+        for ref in ("3:102", "4:1", "33:70–71"):
+            self.assertTrue(any(f"[{ref}]" in b["text"] for b in output))
+        self.assertEqual(1798, sum(len(c["blocks"]) for c in BOOK["chapters"]))
+
+    def test_corrupted_verse_translation_is_rejected(self):
+        from scripts.assemble_app import russian_quran_only
+        import copy
+        book = copy.deepcopy(BOOK)
+        book["chapters"][0]["blocks"] = [
+            block for block in book["chapters"][0]["blocks"]
+            if block["id"] != "iman-chapter-001-b0006"
+        ]
+        with self.assertRaises(RuntimeError):
+            russian_quran_only(book)
+
+    def test_toc_style_does_not_touch_other_screens(self):
+        from scripts.assemble_app import customize_toc_screen
+        fragment = """import androidx.compose.ui.text.style.TextOverflow
+private fun ChapterRow(chapter: Chapter, onClick: () -> Unit, trailing: String? = null) {
+Text(chapter.title, fontFamily = WebLiterataFont, fontWeight = FontWeight.Bold, fontSize = 16.sp, lineHeight = 20.sp)
+                        sectionTitle,
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(start = 4.dp, top = 14.dp, bottom = 3.dp),
+                        color = MaterialTheme.colorScheme.primary,
+                        fontFamily = WebModernFont,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+ChapterRow(chapter, { open(chapter.id) })
+ChapterRow(ch, { onOpen(ch.id, bm.anchor) }, if (bm.anchor != null) "Фрагмент" else bm.folder)
+"""
+        patched = customize_toc_screen(fragment)
+        self.assertIn("centeredTitle = true", patched)
+        self.assertIn("fontSize = if (centeredTitle) 18.sp else 16.sp", patched)
+        self.assertIn("textAlign = if (centeredTitle) TextAlign.Center else TextAlign.Start", patched)
+        self.assertIn("textAlign = TextAlign.Center", patched)
+        self.assertIn("ChapterRow(ch, { onOpen(ch.id, bm.anchor) }", patched)
+
+    def test_upstream_toc_reformatting_fails_closed(self):
+        from scripts.assemble_app import customize_toc_screen
+        with self.assertRaises(RuntimeError):
+            customize_toc_screen("new unrelated layout")
+
+
 if __name__ == "__main__":
     unittest.main()
