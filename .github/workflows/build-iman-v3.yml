@@ -1,4 +1,4 @@
-name: Build Kitab al-Iman v0.5.0
+name: Build Kitab al-Iman v0.6.0
 
 on:
   push:
@@ -41,11 +41,14 @@ jobs:
       - name: Expand and verify the native v0.4 patch source
         run: python3 scripts/unpack_v4.py
 
+      - name: Unpack verified v0.6 reading and study sources
+        run: python3 scripts/unpack_v6.py
+
       - name: Test book preservation, quotes and navigation
         run: python3 -m unittest discover -s tests -v
 
-      - name: Prepare native v0.5.0 application
-        run: python3 -m scripts.build_iman_v5 --dest AndroidApp
+      - name: Prepare native v0.6.0 application
+        run: python3 -m scripts.build_iman_v6 --dest AndroidApp
 
       - name: Check transformed source and data
         run: |
@@ -62,6 +65,10 @@ jobs:
           assert sum(b['type']=='hadith' for b in blocks) >= 15
           assert all(not c['section'] for c in book['chapters'])
           assert not any(b['type']=='quran' for b in blocks)
+          assert sum(len(b.get('footnoteOffsets',[])) for b in blocks) == 242
+          quiz = json.loads((root/'app/src/main/assets/quiz.json').read_text(encoding='utf-8'))
+          assert len(quiz['chapters']) == 131
+          assert sum(len(q) for q in quiz['chapters'].values()) == 524
           src = root/'app/src/main/java/com/xalid/meditsinaproroka/nativeapp'
           reader=(src/'Reader.kt').read_text(encoding='utf-8')
           screens=(src/'Screens.kt').read_text(encoding='utf-8')
@@ -80,6 +87,13 @@ jobs:
           assert 'Modifier.size(38.dp)' in screens
           assert 'TextAlign.Center' in reader
           assert '21 else 24' in reader
+          assert 'FaithChapterQuiz(chapter = chapter, store = store)' in reader
+          assert 'EditionFootnoteSpan' in reader
+          assert 'isBookSectionMarker(block.text)' in reader
+          assert 'FaithReadingProgress(chapter = chapter, store = store)' in reader
+          assert (src/'FaithStudy.kt').is_file()
+          assert 'Route.Progress' in app
+          assert 'Прогресс чтения' in menu
           assert (src.parent.parent.parent/'test/java/com/xalid/meditsinaproroka/nativeapp/ImanReaderV4Test.kt').is_file() or (root/'app/src/test/java/com/xalid/meditsinaproroka/nativeapp/ImanReaderV4Test.kt').is_file()
           assert 'PageHeader("Оглавление"' in screens
           assert 'NavItem("Оглавление"' in app
@@ -116,13 +130,14 @@ jobs:
             exit 1
           fi
           unzip -p "$APK" assets/book.json | cmp - AndroidApp/app/src/main/assets/book.json
+          unzip -p "$APK" assets/quiz.json | cmp - AndroidApp/app/src/main/assets/quiz.json
           "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$APK" | grep '^package:'
           sha256sum "$APK"
 
       - name: Publish installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.5.0-Release-APK
+          name: KitabAlIman-v0.6.0-Release-APK
           path: AndroidApp/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 7
