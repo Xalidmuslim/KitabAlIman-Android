@@ -1,4 +1,4 @@
-name: Build Kitab al-Iman v0.6.0
+name: Build Kitab al-Iman v0.7.0
 
 on:
   push:
@@ -47,8 +47,8 @@ jobs:
       - name: Test book preservation, quotes and navigation
         run: python3 -m unittest discover -s tests -v
 
-      - name: Prepare native v0.6.0 application
-        run: python3 -m scripts.build_iman_v6 --dest AndroidApp
+      - name: Prepare native v0.7.0 application
+        run: python3 -m scripts.build_iman_v7 --dest AndroidApp
 
       - name: Check transformed source and data
         run: |
@@ -79,6 +79,9 @@ jobs:
           assert 'FaithSourceCard(chapter, block, store)' in reader
           assert 'ScriptureParagraph(chapter, block, store)' in reader
           assert 'citedVerseSlices(text: String)' in reader
+          assert 'while (end < text.length && text[end] in ".,;:!?") end++' in reader
+          assert 'while (end < text.length && text[end].isWhitespace()) end++' in reader
+          assert (root/'app/src/test/java/com/xalid/meditsinaproroka/nativeapp/ImanReaderV7Test.kt').is_file()
           assert 'compactFootnote: Boolean = false' in reader
           assert 'val sourceStart: Int = 0' in reader
           assert 'fontSize = if (centeredTitle) 16.5.sp else 16.sp' in screens
@@ -137,7 +140,7 @@ jobs:
       - name: Publish installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.6.0-Release-APK
+          name: KitabAlIman-v0.7.0-Release-APK
           path: AndroidApp/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 7
