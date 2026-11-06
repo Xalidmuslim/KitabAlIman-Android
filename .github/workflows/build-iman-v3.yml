@@ -1,4 +1,4 @@
-name: Build Kitab al-Iman v0.7.0
+name: Build Kitab al-Iman v0.8.0
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   android:
@@ -44,11 +44,25 @@ jobs:
       - name: Unpack verified v0.6 reading and study sources
         run: python3 scripts/unpack_v6.py
 
+      - name: Install Pillow for verified source artwork
+        run: python3 -m pip install --disable-pip-version-check Pillow==12.3.0
+
       - name: Test book preservation, quotes and navigation
         run: python3 -m unittest discover -s tests -v
 
-      - name: Prepare native v0.7.0 application
-        run: python3 -m scripts.build_iman_v7 --dest AndroidApp
+      - name: Prepare native v0.8.0 application
+        run: python3 -m scripts.build_iman_v8 --dest AndroidApp
+
+      - name: Vendor approved visual assets in GitHub
+        run: |
+          set -euo pipefail
+          if [ -n "$(git status --porcelain -- assets/ui/)" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add assets/ui/iman_home_banner.webp assets/ui/iman_launcher_icon.webp
+            git commit -m 'Store approved Kitab al-Iman visual assets [skip ci]'
+            git push || echo 'Could not vendor images; current APK still contains the verified assets'
+          fi
 
       - name: Check transformed source and data
         run: |
@@ -105,6 +119,11 @@ jobs:
           assert 'antique_remedies_detail' not in home
           assert 'Route.Treatments' not in menu
           assert 'Route.Remedies' not in menu
+          assert 'val bannerHeight = maxWidth / 3f' in home
+          assert 'ContentScale.FillBounds' in home
+          assert 'Icons.Default.Settings' in home
+          assert (root/'app/src/main/res/drawable-nodpi/antique_hero_refined.webp').stat().st_size > 20000
+          assert (root/'app/src/main/res/drawable-nodpi/medicine_launcher_book.webp').stat().st_size > 15000
           assert not list((root/'app/src/main').rglob('*.pdf'))
           print('PASS: 131 chapters, 242 footnotes, compact contents, no medical links or PDF')
           PY
@@ -140,7 +159,7 @@ jobs:
       - name: Publish installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.7.0-Release-APK
+          name: KitabAlIman-v0.8.0-Release-APK
           path: AndroidApp/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 7
