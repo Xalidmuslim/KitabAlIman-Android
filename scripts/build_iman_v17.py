@@ -11,7 +11,7 @@ from scripts.build_iman_v16 import build_v16, once
 JAVA = Path("app/src/main/java/com/xalid/meditsinaproroka/nativeapp")
 NAV = "@Composable\nprivate fun StandaloneBottomNav("
 ART = {
-    "iman_v17_quote.webp": ("8bcc6b2306f32883dc4af32cb801ecb4f95607435f84c5da675547ad6db26cad", (320, 282)),
+    "iman_v17_quote.webp": ("220cc6ab2840109ec962f9bea4df556f7d9bd4ef7f2b38b69d121b0d9581a659", (280, 248)),
     "iman_v17_contents.webp": ("c985fb21c5a8391fd9e7237e0707d02fac54f64c464d9c3b35aacdee356f3910", (184, 158)),
     "iman_v17_collections.webp": ("f6d23a509644b883d0a70e58d89bb75d622aa88c9be27da7ad98992ae0e469e5", (184, 158)),
     "iman_v17_glossary.webp": ("6dc7b9b39c0d89f6726e4985e2e06e8dfd351617ec74b34b4cff3bcf9f1c0a5f", (184, 158)),
