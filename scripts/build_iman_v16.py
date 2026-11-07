@@ -40,7 +40,7 @@ def load_curated_quotes(book, key_text, previous_source):
     for i,(block_id,prefix) in enumerate(keys):
         if block_id not in by_id: raise RuntimeError("Missing original block: "+block_id)
         chapter_id,block=by_id[block_id]
-        if block["type"] != "text": raise RuntimeError("Unexpected footnote/verse source")
+        if block["type"] not in ("text", "scholar"): raise RuntimeError("Unexpected footnote/verse source")
         if i<7:
             cid,bid,text=originals[i]
             if cid!=chapter_id or bid!=block_id or not text.startswith(prefix):
