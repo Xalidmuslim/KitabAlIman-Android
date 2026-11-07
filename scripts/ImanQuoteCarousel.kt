@@ -54,14 +54,14 @@ internal fun ImanFeaturedQuoteCarousel(navigate: (Route) -> Unit) {
     val muted = if (dark) MaterialTheme.colorScheme.onSurfaceVariant else Color(0xFF80644A)
     val accent = if (dark) MaterialTheme.colorScheme.primary else Color(0xFF745238)
     Surface(
-        color = if (dark) MaterialTheme.colorScheme.surface else Color(0xFFF0DCC2),
-        shape = RoundedCornerShape(16.dp),
-        border = BorderStroke(1.dp, if (dark) MaterialTheme.colorScheme.outline else Color(0xFFC7A57E)),
+        color = if (dark) MaterialTheme.colorScheme.surface else Color(0xFFF6E3C9),
+        shape = RoundedCornerShape(19.dp),
+        border = BorderStroke(1.dp, if (dark) MaterialTheme.colorScheme.outline else Color(0xFFC69C6D)),
         modifier = Modifier.fillMaxWidth(),
     ) {
         Box(Modifier.fillMaxWidth()) {
             if (!dark) Image(
-                painter = MedicineHomeArtwork.painter(R.drawable.iman_quote_background),
+                painter = MedicineHomeArtwork.painter(R.drawable.iman_quote_v15),
                 contentDescription = null, modifier = Modifier.matchParentSize(),
                 contentScale = ContentScale.FillBounds)
             Column(Modifier.fillMaxWidth().padding(horizontal = 15.dp, vertical = 14.dp)) {
@@ -70,9 +70,16 @@ internal fun ImanFeaturedQuoteCarousel(navigate: (Route) -> Unit) {
                         letterSpacing = 0.6.sp, fontWeight = FontWeight.SemiBold,
                         color = accent, modifier = Modifier.weight(1f))
                     Text((current+1).toString()+"/"+imanExcerpts.size, fontSize = 10.sp, color = muted)
+                    TextButton(onClick = {
+                        current = (current + 1) % imanExcerpts.size
+                        prefs.edit().putInt("last_shown", current).apply()
+                    }, contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp)) {
+                        Text("Другая ↻", fontSize = 11.sp, color = accent,
+                            fontWeight = FontWeight.SemiBold)
+                    }
                 }
                 Spacer(Modifier.height(12.dp))
-                Text(q.text, modifier = Modifier.fillMaxWidth(0.79f),
+                Text(q.text, modifier = Modifier.fillMaxWidth(0.70f),
                     fontFamily = WebLiterataFont, fontSize = 16.5.sp, lineHeight = 23.sp,
                     fontWeight = FontWeight.Bold, color = ink,
                     maxLines = 8, overflow = TextOverflow.Ellipsis)
@@ -93,14 +100,7 @@ internal fun ImanFeaturedQuoteCarousel(navigate: (Route) -> Unit) {
                                 modifier = Modifier.size(17.dp), tint = Color(0xFFFFF5E5))
                         }
                     }
-                    Spacer(Modifier.weight(1f))
-                    TextButton(onClick = {
-                        current = (current + 1) % imanExcerpts.size
-                        prefs.edit().putInt("last_shown", current).apply()
-                    }, contentPadding = PaddingValues(horizontal = 4.dp)) {
-                        Text("Другая ↻", fontSize = 11.sp, color = accent,
-                            fontWeight = FontWeight.SemiBold)
-                    }
+
                 }
             }
         }

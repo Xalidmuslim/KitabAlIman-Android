@@ -1,4 +1,4 @@
-name: Build Kitab al-Iman v0.14.0
+name: Build Kitab al-Iman v0.15.0
 
 on:
   push:
@@ -9,6 +9,7 @@ on:
       - codex/ibn-v38-engine-20261107
       - codex/v38-screen-parity-20261107
       - codex/iman-v14-quote-art-20261107
+      - codex/iman-reminder-background-v15-20261107
   workflow_dispatch:
 
 permissions:
@@ -54,8 +55,8 @@ jobs:
       - name: Test book preservation, quotes and navigation
         run: python3 -m unittest discover -s tests -v
 
-      - name: Prepare native v0.14.0 application
-        run: python3 -m scripts.build_iman_v14 --dest AndroidApp
+      - name: Prepare native v0.15.0 application
+        run: python3 -m scripts.build_iman_v15 --dest AndroidApp
 
       - name: Check transformed source and data
         run: |
@@ -127,6 +128,9 @@ jobs:
           assert 'ЛИЧНАЯ БИБЛИОТЕКА' in (src/'ImanV38More.kt').read_text(encoding='utf-8')
           quotes=(src/'ImanQuoteCarousel.kt').read_text(encoding='utf-8')
           assert 'Другая ↻' in quotes
+          assert 'R.drawable.iman_quote_v15' in quotes
+          assert quotes.index('Text("Другая ↻"') < quotes.index('Text(q.text')
+          assert (root/'app/src/main/res/drawable-nodpi/iman_quote_v15.webp').stat().st_size > 10000
           assert 'ImanFeaturedQuoteCarousel(navigate)' in (src/'IbnQayyimStyle.kt').read_text(encoding='utf-8')
           assert 'ОЗВУЧИВАНИЕ ГЛАВЫ' in reader
           assert 'Бесплатный нейроголос RuVoice (установка)' not in reader
@@ -186,7 +190,7 @@ jobs:
       - name: Publish installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.14.0-Release-APK
+          name: KitabAlIman-v0.15.0-Release-APK
           path: AndroidApp/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 7
