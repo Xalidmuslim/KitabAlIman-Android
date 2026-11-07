@@ -1,4 +1,4 @@
-name: Build Kitab al-Iman v0.13.0
+name: Build Kitab al-Iman v0.14.0
 
 on:
   push:
@@ -8,6 +8,7 @@ on:
       - codex/ibn-qayyim-ui-port-20261107
       - codex/ibn-v38-engine-20261107
       - codex/v38-screen-parity-20261107
+      - codex/iman-v14-quote-art-20261107
   workflow_dispatch:
 
 permissions:
@@ -53,8 +54,8 @@ jobs:
       - name: Test book preservation, quotes and navigation
         run: python3 -m unittest discover -s tests -v
 
-      - name: Prepare native v0.13.0 application
-        run: python3 -m scripts.build_iman_v13 --dest AndroidApp
+      - name: Prepare native v0.14.0 application
+        run: python3 -m scripts.build_iman_v14 --dest AndroidApp
 
       - name: Check transformed source and data
         run: |
@@ -124,6 +125,16 @@ jobs:
           assert 'NavItem("Оглавление", R.drawable.nav_topics' in app
           assert 'Route.More -> ImanV38MoreScreen(screenModifier, ::navigate)' in app
           assert 'ЛИЧНАЯ БИБЛИОТЕКА' in (src/'ImanV38More.kt').read_text(encoding='utf-8')
+          quotes=(src/'ImanQuoteCarousel.kt').read_text(encoding='utf-8')
+          assert 'Другая ↻' in quotes
+          assert 'ImanFeaturedQuoteCarousel(navigate)' in (src/'IbnQayyimStyle.kt').read_text(encoding='utf-8')
+          assert 'ОЗВУЧИВАНИЕ ГЛАВЫ' in reader
+          assert 'Бесплатный нейроголос RuVoice (установка)' not in reader
+          assert 'height(2.dp)' in (src/'IbnV38StudyEngine.kt').read_text(encoding='utf-8')
+          assert all((root/'app/src/main/res/drawable-nodpi'/n).stat().st_size>9000
+            for n in ('iman_quote_background.webp','iman_section_contents.webp',
+              'iman_section_collections.webp','iman_section_glossary.webp',
+              'iman_section_bookmarks.webp'))
           assert 'Color(0xFF8E6832)' in home
           assert 'Color(0xFFF9DFBC)' in home
           assert 'ImanHomeCollectionCard' in home
@@ -175,7 +186,7 @@ jobs:
       - name: Publish installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.13.0-Release-APK
+          name: KitabAlIman-v0.14.0-Release-APK
           path: AndroidApp/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 7
