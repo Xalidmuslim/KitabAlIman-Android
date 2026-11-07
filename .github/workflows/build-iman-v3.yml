@@ -1,10 +1,11 @@
-name: Build Kitab al-Iman v0.10.0
+name: Build Kitab al-Iman v0.11.0
 
 on:
   push:
     branches:
       - main
       - codex/iman-reader-ui-20261106
+      - codex/ibn-qayyim-ui-port-20261107
   workflow_dispatch:
 
 permissions:
@@ -50,8 +51,8 @@ jobs:
       - name: Test book preservation, quotes and navigation
         run: python3 -m unittest discover -s tests -v
 
-      - name: Prepare native v0.10.0 application
-        run: python3 -m scripts.build_iman_v10 --dest AndroidApp
+      - name: Prepare native v0.11.0 application
+        run: python3 -m scripts.build_iman_v11 --dest AndroidApp
 
       - name: Check transformed source and data
         run: |
@@ -112,6 +113,10 @@ jobs:
           assert 'ContentScale.FillBounds' in home
           assert 'Icons.Default.Settings' in home
           assert 'Шейхуль-Ислам Ибн Таймийя' in home
+          assert 'IbnStyleHomeScreen(book, store, modifier' in home
+          assert 'Route.Book -> IbnStyleContentsScreen(' in app
+          assert (src/'IbnQayyimStyle.kt').is_file()
+          assert 'NavItem("Оглавление", R.drawable.nav_topics' in app
           assert 'Color(0xFF8E6832)' in home
           assert 'Color(0xFFF9DFBC)' in home
           assert 'ImanHomeCollectionCard' in home
@@ -163,7 +168,7 @@ jobs:
       - name: Publish installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.10.0-Release-APK
+          name: KitabAlIman-v0.11.0-Release-APK
           path: AndroidApp/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 7

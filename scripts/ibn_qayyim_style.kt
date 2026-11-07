@@ -31,7 +31,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.android.awaitFrame
 
 // Adapted from the actual IbnKayim v38 HTML/CSS screens, without WebView.
 // Scope all palette/styling to these screens. App bottom nav + icon resources
