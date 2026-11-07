@@ -117,7 +117,7 @@ jobs:
           assert 'ImanHomeCollectionCard' in home
           assert 'val bannerHeight = maxWidth / 3f' in home
           assert 'R.drawable.iman_glossary_detail' in home
-          assert 'width = 84.dp, height = 56.dp' in home
+          assert 'width = 105.dp, height = 89.dp' in home
           from scripts.build_iman_v9 import RESOURCE_MAP
           import hashlib
           assert len(RESOURCE_MAP) == 7
