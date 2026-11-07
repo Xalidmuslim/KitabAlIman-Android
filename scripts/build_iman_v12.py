@@ -38,7 +38,13 @@ def build_v12(kit, dest):
     expected='a3578b8c0ee786675a3ead7e15b576adaad046062086b260093123fb1080f759'
     if hashlib.sha256(kotlin).hexdigest()!=expected:
         raise RuntimeError('v38 native study engine source checksum failed')
-    (src/'IbnV38StudyEngine.kt').write_bytes(kotlin)
+    source = kotlin.decode('utf-8')
+    # Compose's Modifier.background extension is an explicit import.
+    source = one(source,
+        'import androidx.compose.foundation.clickable',
+        'import androidx.compose.foundation.background\nimport androidx.compose.foundation.clickable',
+        'background extension import')
+    (src/'IbnV38StudyEngine.kt').write_text(source, encoding='utf-8')
     tests=dest/'app/src/test/java/com/xalid/meditsinaproroka/nativeapp'
     tests.mkdir(parents=True,exist_ok=True)
     (tests/'IbnV38StudyEngineTest.kt').write_text((kit/'scripts/IbnV38StudyEngineTest.kt').read_text(encoding='utf-8'),encoding='utf-8')
