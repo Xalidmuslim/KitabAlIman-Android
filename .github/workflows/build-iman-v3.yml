@@ -1,4 +1,4 @@
-name: Build Kitab al-Iman v0.18.0
+name: Build Kitab al-Iman v0.19.0
 
 on:
   push:
@@ -13,6 +13,7 @@ on:
       - codex/iman-v16-quotes-compact-20261107
       - codex/iman-v17-light-art-20261107
       - codex/iman-modern-editorial-v18-20261107
+      - codex/iman-editorial-premium-v19-20261107
   workflow_dispatch:
 
 permissions:
@@ -58,8 +59,8 @@ jobs:
       - name: Test book preservation, quotes and navigation
         run: python3 -m unittest discover -s tests -v
 
-      - name: Prepare native v0.18.0 application
-        run: python3 -m scripts.build_iman_v18 --dest AndroidApp
+      - name: Prepare native v0.19.0 application
+        run: python3 -m scripts.build_iman_v19 --dest AndroidApp
 
       - name: Check transformed source and data
         run: |
@@ -136,9 +137,11 @@ jobs:
           assert 'maxLines = 4' in quotes
           assert 'ModernEditorialHomeScreen(book, store, modifier' in (src/'IbnQayyimStyle.kt').read_text(encoding='utf-8')
           assert 'SepiaMiniStat(' not in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
+          assert 'R.drawable.iman_v17_contents' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
+          assert 'Route.Progress' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'ContentScale.FillBounds' not in quotes
-          assert 'Alignment.BottomEnd' in quotes
-          assert quotes.index('Text("Другая ↻"') < quotes.index('Text(q.text')
+          assert 'Brush.horizontalGradient' in quotes
+          assert quotes.index('Text("Другая ↻"') < quotes.index('q.text')
           assert (root/'app/src/main/res/drawable-nodpi/iman_quote_v15.webp').stat().st_size > 10000
           assert 'ImanFeaturedQuoteCarousel(navigate)' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'private fun ReaderChapterSpeechBar(' in reader
@@ -147,8 +150,8 @@ jobs:
           assert len(quote_data)==79
           assert len(set(q['text'] for q in quote_data))==79
           assert len(set(q['chapterId'] for q in quote_data))>=50
-          assert 'heightIn(min=90.dp)' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
-          assert 'EditorialReadingCard(' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
+          assert 'heightIn(min = 76.dp)' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
+          assert 'EditorialResumeCard(' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'Route.Book' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'Route.Bookmarks' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'Бесплатный нейроголос RuVoice (установка)' not in reader
@@ -211,7 +214,7 @@ jobs:
       - name: Publish installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.18.0-Release-APK
+          name: KitabAlIman-v0.19.0-Release-APK
           path: AndroidApp/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 7
@@ -222,9 +225,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          TAG=v0.18.0
+          TAG=v0.19.0
           APK=AndroidApp/app/build/outputs/apk/release/app-release.apk
           if ! gh release view "$TAG" >/dev/null 2>&1; then
-            gh release create "$TAG" --target "$GITHUB_SHA" --title "Книга Имана v0.18.0" --notes "Modern Editorial: минималистичный главный экран, компактные цитаты, объединённые чтение и прогресс."
+            gh release create "$TAG" --target "$GITHUB_SHA" --title "Книга Имана v0.19.0" --notes "Новый книжный главный экран: акцентное напоминание, объединённые чтение и прогресс, компактные 3D-карточки разделов. Нижняя навигация сохранена."
           fi
-          gh release upload "$TAG" "$APK#KitabAlIman-v0.18.0.apk" --clobber
+          gh release upload "$TAG" "$APK#KitabAlIman-v0.19.0.apk" --clobber
