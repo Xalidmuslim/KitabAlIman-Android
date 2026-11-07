@@ -121,7 +121,7 @@ jobs:
           assert 'Color(0xFFF9DFBC)' in home
           assert 'ImanHomeCollectionCard' in home
           assert 'val bannerHeight = maxWidth / 3f' in home
-          assert 'R.drawable.iman_glossary_detail' in home
+          assert 'R.drawable.iman_glossary_detail' in (src/'IbnQayyimStyle.kt').read_text(encoding='utf-8')
           assert 'width = 105.dp, height = 89.dp' in home
           from scripts.build_iman_v9 import RESOURCE_MAP
           import hashlib
