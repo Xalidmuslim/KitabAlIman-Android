@@ -1,4 +1,4 @@
-name: Build Kitab al-Iman v0.12.0
+name: Build Kitab al-Iman v0.13.0
 
 on:
   push:
@@ -7,6 +7,7 @@ on:
       - codex/iman-reader-ui-20261106
       - codex/ibn-qayyim-ui-port-20261107
       - codex/ibn-v38-engine-20261107
+      - codex/v38-screen-parity-20261107
   workflow_dispatch:
 
 permissions:
@@ -52,8 +53,8 @@ jobs:
       - name: Test book preservation, quotes and navigation
         run: python3 -m unittest discover -s tests -v
 
-      - name: Prepare native v0.12.0 application
-        run: python3 -m scripts.build_iman_v12 --dest AndroidApp
+      - name: Prepare native v0.13.0 application
+        run: python3 -m scripts.build_iman_v13 --dest AndroidApp
 
       - name: Check transformed source and data
         run: |
@@ -121,6 +122,8 @@ jobs:
           assert (src/'IbnV38StudyEngine.kt').is_file()
           assert (src/'IbnQayyimStyle.kt').is_file()
           assert 'NavItem("Оглавление", R.drawable.nav_topics' in app
+          assert 'Route.More -> ImanV38MoreScreen(screenModifier, ::navigate)' in app
+          assert 'ЛИЧНАЯ БИБЛИОТЕКА' in (src/'ImanV38More.kt').read_text(encoding='utf-8')
           assert 'Color(0xFF8E6832)' in home
           assert 'Color(0xFFF9DFBC)' in home
           assert 'ImanHomeCollectionCard' in home
@@ -172,7 +175,7 @@ jobs:
       - name: Publish installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.12.0-Release-APK
+          name: KitabAlIman-v0.13.0-Release-APK
           path: AndroidApp/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 7
