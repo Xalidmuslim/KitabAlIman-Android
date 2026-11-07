@@ -1,4 +1,4 @@
-name: Build Kitab al-Iman v0.8.0
+name: Build Kitab al-Iman v0.9.0
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   android:
@@ -50,19 +50,8 @@ jobs:
       - name: Test book preservation, quotes and navigation
         run: python3 -m unittest discover -s tests -v
 
-      - name: Prepare native v0.8.0 application
-        run: python3 -m scripts.build_iman_v8 --dest AndroidApp
-
-      - name: Vendor approved visual assets in GitHub
-        run: |
-          set -euo pipefail
-          if [ -n "$(git status --porcelain -- assets/ui/)" ]; then
-            git config user.name 'github-actions[bot]'
-            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add assets/ui/iman_home_banner.webp assets/ui/iman_launcher_icon.webp
-            git commit -m 'Store approved Kitab al-Iman visual assets [skip ci]'
-            git push || echo 'Could not vendor images; current APK still contains the verified assets'
-          fi
+      - name: Prepare native v0.9.0 application
+        run: python3 -m scripts.build_iman_v9 --dest AndroidApp
 
       - name: Check transformed source and data
         run: |
@@ -122,6 +111,17 @@ jobs:
           assert 'val bannerHeight = maxWidth / 3f' in home
           assert 'ContentScale.FillBounds' in home
           assert 'Icons.Default.Settings' in home
+          assert '.fillMaxWidth(0.51f)' in home
+          assert 'R.drawable.iman_glossary_detail' in home
+          assert 'width = 84.dp, height = 56.dp' in home
+          from scripts.build_iman_v9 import RESOURCE_MAP
+          import hashlib
+          assert len(RESOURCE_MAP) == 7
+          art_folder = root/'app/src/main/res/drawable-nodpi'
+          for output_file, input_file, expected_sha, size in RESOURCE_MAP:
+              target = art_folder/output_file
+              assert hashlib.sha256(target.read_bytes()).hexdigest() == expected_sha, output_file
+          assert 'R.drawable.iman_glossary_detail' in (src/'MedicineHomeArtwork.kt').read_text(encoding='utf-8')
           assert (root/'app/src/main/res/drawable-nodpi/antique_hero_refined.webp').stat().st_size > 20000
           assert (root/'app/src/main/res/drawable-nodpi/medicine_launcher_book.webp').stat().st_size > 15000
           assert not list((root/'app/src/main').rglob('*.pdf'))
@@ -159,7 +159,7 @@ jobs:
       - name: Publish installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.8.0-Release-APK
+          name: KitabAlIman-v0.9.0-Release-APK
           path: AndroidApp/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 7
