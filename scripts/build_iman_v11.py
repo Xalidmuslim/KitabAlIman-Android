@@ -39,6 +39,8 @@ internal fun AntiqueHomeScreen(
 """
 
 def patch_app(source):
+    if NAV_SIGNATURE not in source:
+        raise RuntimeError('Protected bottom nav anchor is missing')
     marker = source.index(NAV_SIGNATURE)
     untouched_bottom = source[marker:]
     result = one(source, APP_START, APP_END, "contents route")
