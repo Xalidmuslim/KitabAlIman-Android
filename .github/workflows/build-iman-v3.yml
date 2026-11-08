@@ -1,4 +1,4 @@
-name: Build Kitab al-Iman v0.35.0
+name: Build Kitab al-Iman v0.36.0
 
 on:
   push:
@@ -30,6 +30,7 @@ on:
       - codex/iman-final-nav-compact-v33-20261108
       - codex/iman-safe-status-v34-20261108
       - codex/iman-reference-tonal-v35-20261108
+      - codex/iman-statistics-reference-v36-20261108
   workflow_dispatch:
 
 permissions:
@@ -70,7 +71,7 @@ jobs:
         run: python3 scripts/unpack_v6.py
 
       - name: Install Pillow for verified source artwork
-        run: python3 -m pip install --disable-pip-version-check Pillow==12.3.0 numpy==2.2.6
+        run: python3 -m pip install --disable-pip-version-check Pillow==12.3.0 numpy==2.2.6 fonttools==4.60.1 brotli
 
       - name: Create paper texture from approved reference (first run only)
         run: |
@@ -87,8 +88,8 @@ jobs:
       - name: Test book preservation, quotes and navigation
         run: python3 -m unittest discover -s tests -v
 
-      - name: Prepare native v0.35.0 application
-        run: python3 -m scripts.build_iman_v35 --dest AndroidApp
+      - name: Prepare native v0.36.0 application
+        run: python3 -m scripts.build_iman_v36 --dest AndroidApp
 
       - name: Check transformed source and data
         run: |
@@ -174,9 +175,9 @@ jobs:
           assert 'LinearProgressIndicator(' in home_v30
           assert 'Brush.horizontalGradient' not in home_v30
           assert 'border = null' in quote_v30 and 'shadowElevation = 0.dp' in quote_v30
-          assert 'R.drawable.iman_v35_reminder' in quote_v30
-          assert 'height(120.dp)' in quote_v30
-          assert 'width(249.dp).height(163.dp)' in quote_v30
+          assert 'R.drawable.iman_v36_reminder' in quote_v30
+          assert 'height(127.dp)' in quote_v30
+          assert 'width(272.dp).height(168.dp)' in quote_v30
           assert 'showIllustration' in quote_v30
           assert 'R.drawable.iman_v17_quote' not in quote_v30
           assert 'R.drawable.iman_v29_unified_home' in app
@@ -199,9 +200,14 @@ jobs:
           assert 'ModernEditorialHomeScreen(book, store, modifier' in (src/'IbnQayyimStyle.kt').read_text(encoding='utf-8')
           assert 'SepiaMiniStat(' not in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'R.drawable.iman_v35_contents' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
+          assert 'ImanCaveatFont' in quote_v30
+          assert (root/'app/src/main/res/font/iman_caveat.ttf').stat().st_size > 10000
+          assert (root/'app/src/main/assets/iman_caveat_OFL.txt').is_file()
           assert 'Route.Progress' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
-          assert 'book.collections.take(2)' in home_v30
-          assert 'fillMaxWidth(0.62f)' in quote_v30
+          assert 'book.collections.take(2)' not in home_v30
+          assert 'ImanReadingStatistics(book, store)' in home_v30
+          assert (src/'ReadingStatisticsV36.kt').is_file()
+          assert 'fillMaxWidth(0.60f)' in quote_v30
           assert 'ContentScale.FillBounds' not in quotes
           assert 'Crossfade(' in quotes
           assert 'Brush.horizontalGradient' not in quotes
@@ -280,7 +286,7 @@ jobs:
       - name: Publish installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.35.0-Release-APK
+          name: KitabAlIman-v0.36.0-Release-APK
           path: AndroidApp/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 7
@@ -312,18 +318,18 @@ jobs:
             adb shell wm size 432x768
             adb shell wm density 160
             adb shell settings put system font_scale 1.0
-            adb shell am start -W -n com.xalid.kitabaliman.preview35/com.xalid.meditsinaproroka.nativeapp.MainActivity
+            adb shell am start -W -n com.xalid.kitabaliman.preview36/com.xalid.meditsinaproroka.nativeapp.MainActivity
             sleep 9
             mkdir -p qa
-            adb shell screencap -p /sdcard/iman_v35_home.png
-            adb pull /sdcard/iman_v35_home.png qa/iman_v35_home.png
+            adb shell screencap -p /sdcard/iman_v36_home.png
+            adb pull /sdcard/iman_v36_home.png qa/iman_v36_home.png
 
       - name: Upload actual-emulator Home screenshot
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.35.0-Visual-QA
-          path: qa/iman_v35_home.png
+          name: KitabAlIman-v0.36.0-Visual-QA
+          path: qa/iman_v36_home.png
           if-no-files-found: error
           retention-days: 7
 
@@ -333,9 +339,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          TAG=v0.35.0
+          TAG=v0.36.0
           APK=AndroidApp/app/build/outputs/apk/release/app-release.apk
           if ! gh release view "$TAG" >/dev/null 2>&1; then
-            gh release create "$TAG" --target "$GITHUB_SHA" --title "Книга Имана v0.31.0" --notes "Единый безрамочный фон главного экрана и навигации, шесть оригинальных реалистичных рисунков; содержимое книги сохранено."
+            gh release create "$TAG" --target "$GITHUB_SHA" --title "Книга Имана v0.36.0" --notes "Единый безрамочный фон главного экрана и навигации, шесть оригинальных реалистичных рисунков; содержимое книги сохранено."
           fi
-          gh release upload "$TAG" "$APK#KitabAlIman-v0.35.0.apk" --clobber
+          gh release upload "$TAG" "$APK#KitabAlIman-v0.36.0.apk" --clobber
