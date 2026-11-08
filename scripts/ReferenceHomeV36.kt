@@ -101,7 +101,7 @@ private fun EditorialResumeCard(
                     fontSize = 11.sp, fontWeight = FontWeight.Bold,
                     color = editorialBronze())
             }
-            Spacer(Modifier.height(3.dp))
+            Spacer(Modifier.height(1.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(title, modifier = Modifier.weight(1f),
                     fontFamily = WebLiterataFont, fontSize = 15.sp, lineHeight = 20.sp,
@@ -110,7 +110,7 @@ private fun EditorialResumeCard(
                 Icon(Icons.Default.ChevronRight, contentDescription = "Открыть главу",
                     modifier = Modifier.size(22.dp), tint = editorialBronze())
             }
-            Spacer(Modifier.height(3.dp))
+            Spacer(Modifier.height(1.dp))
             LinearProgressIndicator(
                 progress = { (percent / 100f).coerceIn(0f, 1f) },
                 modifier = Modifier.fillMaxWidth().height(2.5.dp),
@@ -123,7 +123,7 @@ private fun EditorialResumeCard(
                     modifier = Modifier.weight(1f), fontFamily = WebSansFont,
                     fontSize = 10.sp, color = editorialMuted())
                 TextButton(
-                    onClick = goProgress, modifier = Modifier.height(36.dp),
+                    onClick = goProgress, modifier = Modifier.height(24.dp),
                     contentPadding = PaddingValues(horizontal = 4.dp),
                 ) {
                     Text("Мой прогресс", fontFamily = WebSansFont,
@@ -139,15 +139,15 @@ private fun EditorialBookSection(
     title: String, subtitle: String, icon: Int,
     modifier: Modifier, go: () -> Unit,
 ) {
-    EditorialPaperCard(modifier.heightIn(min = 96.dp), click = go) {
+    EditorialPaperCard(modifier.heightIn(min = 76.dp), click = go) {
         Column(
-            Modifier.fillMaxWidth().padding(horizontal = 1.dp, vertical = 3.dp),
+            Modifier.fillMaxWidth().padding(horizontal = 1.dp, vertical = 1.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Image(
                 painter = MedicineHomeArtwork.painter(icon),
                 contentDescription = null,
-                modifier = Modifier.fillMaxWidth().height(70.dp),
+                modifier = Modifier.fillMaxWidth().height(54.dp),
                 contentScale = ContentScale.Fit,
                 alpha = 1f,
             )
