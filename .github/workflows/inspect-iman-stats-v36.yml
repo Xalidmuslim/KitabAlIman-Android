@@ -1,0 +1,24 @@
+name: Inspect native reading statistics contracts v36
+on:
+  push:
+    branches: [codex/iman-statistics-reference-v36-20261108]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect original state schemas without compiling or changing data
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import lzma,base64,re
+          kotlin=lzma.decompress(base64.b64decode(Path('scripts/v12_engine.b64').read_text().strip())).decode()
+          for term in ('class V38ReadingLedger', 'V38StatisticsScreen', 'quizResults', 'quizScores', 'reviewResults', 'AppStore', 'weekly', 'fun week'):
+              print('\n###',term)
+              loc=[m.start() for m in re.finditer(re.escape(term),kotlin)]
+              for p in loc[:3]:
+                  print(kotlin[max(0,p-250):p+4200][:4400])
+          PY
