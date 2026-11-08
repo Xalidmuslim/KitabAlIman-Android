@@ -91,7 +91,7 @@ private fun EditorialResumeCard(
     goRead: () -> Unit, goProgress: () -> Unit,
 ) {
     EditorialPaperCard(click = goRead) {
-        Column(Modifier.fillMaxWidth().padding(start = 5.dp, end = 3.dp, top = 6.dp, bottom = 6.dp)) {
+        Column(Modifier.fillMaxWidth().padding(start = 5.dp, end = 3.dp, top = 1.dp, bottom = 1.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(if (readingStarted) "ПРОДОЛЖИТЬ ЧТЕНИЕ" else "НАЧАТЬ ЧТЕНИЕ",
                     modifier = Modifier.weight(1f),
@@ -139,7 +139,7 @@ private fun EditorialBookSection(
     title: String, subtitle: String, icon: Int,
     modifier: Modifier, go: () -> Unit,
 ) {
-    EditorialPaperCard(modifier.heightIn(min = 92.dp), click = go) {
+    EditorialPaperCard(modifier.heightIn(min = 76.dp), click = go) {
         Column(
             Modifier.fillMaxWidth().padding(horizontal = 1.dp, vertical = 1.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -147,7 +147,7 @@ private fun EditorialBookSection(
             Image(
                 painter = MedicineHomeArtwork.painter(icon),
                 contentDescription = null,
-                modifier = Modifier.fillMaxWidth().height(64.dp),
+                modifier = Modifier.fillMaxWidth().height(58.dp),
                 contentScale = ContentScale.Fit,
                 alpha = 1f,
             )
@@ -227,7 +227,7 @@ internal fun ModernEditorialHomeScreen(
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(start = 17.dp, end = 17.dp, top = 0.dp, bottom = 24.dp),
-            verticalArrangement = Arrangement.spacedBy(2.dp),
+            verticalArrangement = Arrangement.spacedBy(0.dp),
         ) {
             item(key = "featured-reminder") { ImanFeaturedQuoteCarousel(navigate) }
             item(key = "resume-with-progress") {

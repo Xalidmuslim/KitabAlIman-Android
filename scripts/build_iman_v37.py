@@ -31,8 +31,8 @@ def build_v37(kit: Path, dest: Path) -> None:
     gradle = dest / "app/build.gradle"
     text = gradle.read_text("utf-8")
     for before, after in (
-        ("versionCode 36", "versionCode 37"),
-        ("versionName '0.36.0'", "versionName '0.37.0'"),
+        ("versionCode 36", "versionCode 38"),
+        ("versionName '0.36.0'", "versionName '0.37.1'"),
         ("applicationIdSuffix '.preview36'", "applicationIdSuffix '.preview37'"),
     ):
         text = replace_one(text, before, after, "v37 isolated test package")
@@ -48,9 +48,9 @@ def build_v37(kit: Path, dest: Path) -> None:
     stats = (kit / "scripts/ReadingStatisticsV37.kt").read_text("utf-8")
     if "ImanReadingStatistics(book, store)" not in home or "maxLines = 5" in quote:
         raise RuntimeError("v37 home/quote regression contract failed")
-    if "heightIn(min = 132.dp)" not in quote or "heightIn(min = 24.dp)" not in stats:
+    if "heightIn(min = 92.dp)" not in quote or "heightIn(min = 18.dp)" not in stats:
         raise RuntimeError("v37 viewport/statistics regression contract failed")
-    if "height(56.dp).clipToBounds()" not in stats:
+    if "height(42.dp).clipToBounds()" not in stats:
         raise RuntimeError("v37 chart not expanded")
     (java / "ModernEditorialHome.kt").write_text(home, "utf-8")
     (java / "ReadingStatisticsV36.kt").write_text(stats, "utf-8")

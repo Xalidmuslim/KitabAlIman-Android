@@ -84,7 +84,7 @@ internal fun ImanReadingStatistics(book: BookData, store: AppStore, openMore: ()
                 StatSectionTitle("По дням", ink)
                 Text("Минуты чтения", fontFamily = WebSansFont, fontSize = 10.sp, color = muted)
                 Spacer(Modifier.height(2.dp))
-                Canvas(Modifier.fillMaxWidth().height(56.dp).clipToBounds()) {
+                Canvas(Modifier.fillMaxWidth().height(42.dp).clipToBounds()) {
                     val top = 7.dp.toPx()
                     val bottom = size.height - 7.dp.toPx()
                     val max = maxOf(1f, daily.maxOrNull() ?: 0f)
@@ -114,7 +114,7 @@ internal fun ImanReadingStatistics(book: BookData, store: AppStore, openMore: ()
                 Spacer(Modifier.height(2.dp))
                 topics.forEach { (name, fraction) ->
                     // Reference: title, progress and percentage live on one baseline.
-                    Row(Modifier.fillMaxWidth().heightIn(min = 24.dp),
+                    Row(Modifier.fillMaxWidth().heightIn(min = 18.dp),
                         verticalAlignment = Alignment.CenterVertically) {
                         Text(name, fontFamily = WebSansFont, fontSize = 10.2.sp,
                             lineHeight = 12.sp, color = ink, maxLines = 2,
@@ -142,7 +142,7 @@ internal fun ImanReadingStatistics(book: BookData, store: AppStore, openMore: ()
                     fontSize = 10.sp, color = muted)
                 Spacer(Modifier.height(2.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(Modifier.size(56.dp), contentAlignment = Alignment.Center) {
+                    Box(Modifier.size(52.dp), contentAlignment = Alignment.Center) {
                         Canvas(Modifier.fillMaxSize()) {
                             val width = 6.dp.toPx()
                             val inset = width / 2f
