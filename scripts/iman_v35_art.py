@@ -46,17 +46,31 @@ def soften_reminder(source:Image.Image)->Image.Image:
     # Preserve the finely illustrated arch, while removing the bright square
     # plume and improving the visual occupancy of the book/feather.
     a=im.getchannel("A")
-    bbox=a.point(lambda v:255 if v>=42 else 0).getbbox()
+    bbox=a.point(lambda v:255 if v>=112 else 0).getbbox()
     if bbox is None:
         raise ValueError("Reminder artwork is transparent")
     left,top,right,bottom=bbox
-    padx=max(6,round((right-left)*.047))
-    pady=max(5,round((bottom-top)*.047))
-    box=(max(0,left-padx),max(0,top-pady),
-         min(w,right+padx),min(h,bottom+pady))
+    # A loose threshold would include the old broad shadow halo and *shrink*
+    # the visible object when fitted to this fixed Android drawable.
+    pad=2
+    box=(max(0,left-pad),max(0,top-pad),
+         min(w,right+pad),min(h,bottom+pad))
     crop=im.crop(box)
-    tw=int(w*.93)
-    th=int(h*.93)
+    # Feather the new crop edges so the arched decorative halo still
+    # dissolves into the paper instead of turning into a rectangular tile.
+    cw,ch=crop.size
+    faded=bytearray(crop.getchannel("A").tobytes())
+    edge=8
+    for cy in range(ch):
+        for cx in range(cw):
+            distance=min(cx,cw-1-cx,cy,ch-1-cy)
+            if distance>=edge:
+                continue
+            u=max(0.,distance/edge)
+            faded[cy*cw+cx]=round(faded[cy*cw+cx]*u*u*(3-2*u))
+    crop.putalpha(Image.frombytes("L",(cw,ch),bytes(faded)))
+    tw=int(w*.985)
+    th=int(h*.985)
     scale=min(tw/crop.width,th/crop.height)
     # Resizing is a pre-build operation; not re-rasterized per frame.
     crop=crop.resize((max(1,round(crop.width*scale)),
