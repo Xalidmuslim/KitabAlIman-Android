@@ -83,7 +83,7 @@ internal fun ImanReadingStatistics(book: BookData, store: AppStore, openMore: ()
                 StatSectionTitle("По дням", ink)
                 Text("Минуты чтения", fontFamily = WebSansFont, fontSize = 10.sp, color = muted)
                 Spacer(Modifier.height(2.dp))
-                Canvas(Modifier.fillMaxWidth().height(47.dp).clipToBounds()) {
+                Canvas(Modifier.fillMaxWidth().height(35.dp).clipToBounds()) {
                     val top = 7.dp.toPx()
                     val bottom = size.height - 7.dp.toPx()
                     val max = maxOf(1f, daily.maxOrNull() ?: 0f)
@@ -110,33 +110,37 @@ internal fun ImanReadingStatistics(book: BookData, store: AppStore, openMore: ()
             Column(Modifier.weight(1f)) {
                 StatSectionTitle("По темам", ink)
                 Text("Доля прочитанного", fontFamily = WebSansFont, fontSize = 10.sp, color = muted)
-                Spacer(Modifier.height(6.dp))
+                Spacer(Modifier.height(2.dp))
                 topics.forEach { (name, fraction) ->
-                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                        Text(name, fontFamily = WebSansFont, fontSize = 10.sp,
-                            color = ink, maxLines = 1, overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.weight(1f))
+                    // Reference: title, progress and percentage live on one baseline.
+                    Row(Modifier.fillMaxWidth().height(20.dp),
+                        verticalAlignment = Alignment.CenterVertically) {
+                        Text(name, fontFamily = WebSansFont, fontSize = 9.5.sp,
+                            lineHeight = 11.sp, color = ink, maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1.4f))
+                        Spacer(Modifier.width(4.dp))
+                        Box(Modifier.weight(.75f).height(4.dp)
+                            .background(track, RoundedCornerShape(4.dp))) {
+                            Box(Modifier.fillMaxWidth(fraction).fillMaxHeight()
+                                .background(bronze, RoundedCornerShape(4.dp)))
+                        }
+                        Spacer(Modifier.width(4.dp))
                         Text("${(fraction * 100).roundToInt()}%",
-                            fontFamily = WebSansFont, fontSize = 9.5.sp, color = muted)
+                            fontFamily = WebSansFont, fontSize = 9.sp, color = muted)
                     }
-                    Box(Modifier.fillMaxWidth().height(4.dp)
-                        .background(track, RoundedCornerShape(4.dp))) {
-                        Box(Modifier.fillMaxWidth(fraction).fillMaxHeight()
-                            .background(bronze, RoundedCornerShape(4.dp)))
-                    }
-                    Spacer(Modifier.height(4.dp))
                 }
             }
         }
-        Spacer(Modifier.height(7.dp))
+        Spacer(Modifier.height(4.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(13.dp)) {
             Column(Modifier.weight(1f)) {
                 StatSectionTitle("Усвоение", ink)
                 Text("По результатам тестов", fontFamily = WebSansFont,
                     fontSize = 10.sp, color = muted)
-                Spacer(Modifier.height(6.dp))
+                Spacer(Modifier.height(2.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(Modifier.size(57.dp), contentAlignment = Alignment.Center) {
+                    Box(Modifier.size(48.dp), contentAlignment = Alignment.Center) {
                         Canvas(Modifier.fillMaxSize()) {
                             val width = 6.dp.toPx()
                             val inset = width / 2f
