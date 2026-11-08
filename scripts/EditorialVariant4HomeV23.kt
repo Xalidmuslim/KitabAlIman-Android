@@ -235,17 +235,17 @@ internal fun ModernEditorialHomeScreen(
             item(key = "sections-a") {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     EditorialBookSection("Оглавление", chapters.size.toString() + " глав",
-                        R.drawable.iman_v23_contents, Modifier.weight(1f)) { navigate(Route.Book) }
+                        if (dark) R.drawable.iman_v17_contents else R.drawable.iman_v23_contents, Modifier.weight(1f)) { navigate(Route.Book) }
                     EditorialBookSection("Подборки", book.collections.size.toString() + " разделов",
-                        R.drawable.iman_v23_collections, Modifier.weight(1f)) { navigate(Route.Collections) }
+                        if (dark) R.drawable.iman_v17_collections else R.drawable.iman_v23_collections, Modifier.weight(1f)) { navigate(Route.Collections) }
                 }
             }
             item(key = "sections-b") {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     EditorialBookSection("Понятия", book.glossary.size.toString() + " терминов",
-                        R.drawable.iman_v23_glossary, Modifier.weight(1f)) { navigate(Route.Glossary) }
+                        if (dark) R.drawable.iman_v17_glossary else R.drawable.iman_v23_glossary, Modifier.weight(1f)) { navigate(Route.Glossary) }
                     EditorialBookSection("Закладки", store.bookmarks.size.toString() + " сохранено",
-                        R.drawable.iman_v23_bookmarks, Modifier.weight(1f)) { navigate(Route.Bookmarks) }
+                        if (dark) R.drawable.iman_v17_bookmarks else R.drawable.iman_v23_bookmarks, Modifier.weight(1f)) { navigate(Route.Bookmarks) }
                 }
             }
             item(key = "divider-before-topics") { EditorialOrnamentDivider() }
