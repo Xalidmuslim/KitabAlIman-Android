@@ -61,18 +61,18 @@ internal fun ImanFeaturedQuoteCarousel(navigate: (Route) -> Unit) {
                     // forcing a huge 174dp Row. A fixed-height Box gives the art
                     // independent width without letting it dictate vertical rhythm.
                     Box(
-                        modifier = Modifier.fillMaxWidth().height(127.dp),
+                        modifier = Modifier.fillMaxWidth().height(100.dp),
                     ) {
                         Image(
                             painter = MedicineHomeArtwork.painter(R.drawable.iman_v36_reminder),
                             contentDescription = null,
                             modifier = Modifier.align(Alignment.BottomEnd)
-                                .width(272.dp).height(168.dp)
-                                .offset(x = 9.dp, y = 1.dp),
+                                .width(238.dp).height(142.dp)
+                                .offset(x = 24.dp, y = 2.dp),
                             contentScale = ContentScale.Fit,
                         )
                         Column(
-                            Modifier.fillMaxWidth(0.60f)
+                            Modifier.fillMaxWidth(0.58f)
                                 .align(Alignment.TopStart).padding(top = 8.dp),
                         ) {
                             ImanQuoteAnimatedText(current, ink)
@@ -124,8 +124,8 @@ private fun ImanQuoteAnimatedText(current: Int, ink: Color) {
         Text(
             imanExcerpts[itemIndex].text,
             fontFamily = if (imanExcerpts[itemIndex].text.length <= 120) ImanCaveatFont else WebLiterataFont,
-            fontSize = if (imanExcerpts[itemIndex].text.length <= 120) 21.sp else 15.5.sp,
-            lineHeight = if (imanExcerpts[itemIndex].text.length <= 120) 25.sp else 21.sp,
+            fontSize = if (imanExcerpts[itemIndex].text.length <= 120) 22.sp else 15.5.sp,
+            lineHeight = if (imanExcerpts[itemIndex].text.length <= 120) 25.5.sp else 21.sp,
             fontWeight = FontWeight.Normal,
             maxLines = 5,
             overflow = TextOverflow.Ellipsis,
