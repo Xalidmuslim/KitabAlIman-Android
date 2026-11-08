@@ -15,11 +15,13 @@ class StatisticsReferenceV36(unittest.TestCase):
         self.assertNotIn("68%", stats)
         self.assertNotIn("72%", stats)
         self.assertNotIn("88%", stats)
+        self.assertIn("height(47.dp).clipToBounds()",stats)
+        self.assertIn("height(54.dp)",home)
     def test_art_is_embedded_and_quote_uses_real_handwriting_font(self):
         quote=(ROOT/"scripts/ReferenceQuoteV36.kt").read_text("utf-8")
         for token in ("iman_v36_reminder","ImanCaveatFont","Route.Reader(q.chapterId, q.blockId)","Crossfade("):
             self.assertIn(token,quote)
-        self.assertIn(".offset(x = 9.dp", quote)
+        self.assertIn(".offset(x = 24.dp", quote)
     def test_build_protects_book_and_navigation(self):
         src=(ROOT/"scripts/build_iman_v36.py").read_text("utf-8")
         for token in ("build_v35(kit,dest)","preview36","book_hashes","app_before","reader_before","ReadingStatisticsV36.kt","ReferenceQuoteV36.kt","ReferenceHomeV36.kt"):
