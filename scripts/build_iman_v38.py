@@ -100,7 +100,7 @@ def build_v38(kit: Path, dest: Path) -> None:
 
     qpath = java/"ImanQuoteCarousel.kt"
     q_before = qpath.read_text("utf-8")
-    marker = "@Composable\\ninternal fun ImanFeaturedQuoteCarousel("
+    marker = "@Composable\ninternal fun ImanFeaturedQuoteCarousel("
     if q_before.count(marker) != 1 or q_before.count('FeaturedExcerpt("iman-chapter-') != 79:
         raise RuntimeError("v38 source quote anchors changed")
     quote = (kit/"scripts/ReferenceQuoteV38.kt").read_text("utf-8")
@@ -117,9 +117,9 @@ def build_v38(kit: Path, dest: Path) -> None:
     preload = java/"MedicineHomeArtwork.kt"
     src = preload.read_text("utf-8")
     src = replace_one(src,"        R.drawable.iman_v36_reminder,",
-        "        R.drawable.iman_v36_reminder,\\n"
-        "        R.drawable.iman_v38_reminder,\\n"
-        "        R.drawable.iman_v38_notes,\\n"
+        "        R.drawable.iman_v36_reminder,\n"
+        "        R.drawable.iman_v38_reminder,\n"
+        "        R.drawable.iman_v38_notes,\n"
         "        R.drawable.iman_v38_flat_paper,",
         "preload artwork outside draw path")
     preload.write_text(src,"utf-8")
