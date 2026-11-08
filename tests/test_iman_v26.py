@@ -54,7 +54,7 @@ class MattePageV26Tests(unittest.TestCase):
 
     def test_build_preserves_one_root_background_and_reader_storage(self):
         script=(ROOT/"scripts/build_iman_v26.py").read_text("utf-8")
-        self.assertIn("build_v25(kit, dest)",script)
+        self.assertIn("build_v25(kit,dest)",script)
         self.assertIn("reader_before",script)
         self.assertIn("app_before",script)
         self.assertIn("protected_assets",script)
