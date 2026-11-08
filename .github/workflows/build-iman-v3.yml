@@ -1,4 +1,4 @@
-name: Build Kitab al-Iman v0.34.0
+name: Build Kitab al-Iman v0.35.0
 
 on:
   push:
@@ -29,6 +29,7 @@ on:
       - codex/iman-layout-fidelity-v32-20261108
       - codex/iman-final-nav-compact-v33-20261108
       - codex/iman-reference-final-v34-20261108
+      - codex/iman-hero-reference-v35-20261108
   workflow_dispatch:
 
 permissions:
@@ -91,8 +92,8 @@ jobs:
       - name: Test book preservation, quotes and navigation
         run: python3 -m unittest discover -s tests -v
 
-      - name: Prepare native v0.34.0 application
-        run: python3 -m scripts.build_iman_v34 --dest AndroidApp
+      - name: Prepare native v0.35.0 application
+        run: python3 -m scripts.build_iman_v35 --dest AndroidApp
 
       - name: Check transformed source and data
         run: |
@@ -179,7 +180,7 @@ jobs:
           assert 'border = null' in quote_v30 and 'shadowElevation = 0.dp' in quote_v30
           assert 'R.drawable.iman_v34_reminder' in quote_v30
           assert 'height(120.dp)' in quote_v30
-          assert 'width(290.dp).height(183.dp)' in quote_v30
+          assert 'width(380.dp).height(240.dp)' in quote_v30
           assert 'showIllustration' in quote_v30
           assert 'R.drawable.iman_v17_quote' not in quote_v30
           assert 'R.drawable.iman_v29_unified_home' in app
@@ -283,7 +284,7 @@ jobs:
       - name: Publish installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.34.0-Release-APK
+          name: KitabAlIman-v0.35.0-Release-APK
           path: AndroidApp/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 7
@@ -315,18 +316,18 @@ jobs:
             adb shell wm size 432x768
             adb shell wm density 160
             adb shell settings put system font_scale 1.0
-            adb shell am start -W -n com.xalid.kitabaliman.preview34/com.xalid.meditsinaproroka.nativeapp.MainActivity
+            adb shell am start -W -n com.xalid.kitabaliman.preview35/com.xalid.meditsinaproroka.nativeapp.MainActivity
             sleep 9
             mkdir -p qa
-            adb shell screencap -p /sdcard/iman_v34_home.png
-            adb pull /sdcard/iman_v34_home.png qa/iman_v34_home.png
+            adb shell screencap -p /sdcard/iman_v35_home.png
+            adb pull /sdcard/iman_v35_home.png qa/iman_v35_home.png
 
       - name: Upload actual-emulator Home screenshot
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.34.0-Visual-QA
-          path: qa/iman_v34_home.png
+          name: KitabAlIman-v0.35.0-Visual-QA
+          path: qa/iman_v35_home.png
           if-no-files-found: error
           retention-days: 7
 
@@ -336,9 +337,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          TAG=v0.34.0
+          TAG=v0.35.0
           APK=AndroidApp/app/build/outputs/apk/release/app-release.apk
           if ! gh release view "$TAG" >/dev/null 2>&1; then
             gh release create "$TAG" --target "$GITHUB_SHA" --title "Книга Имана v0.31.0" --notes "Единый безрамочный фон главного экрана и навигации, шесть оригинальных реалистичных рисунков; содержимое книги сохранено."
           fi
-          gh release upload "$TAG" "$APK#KitabAlIman-v0.34.0.apk" --clobber
+          gh release upload "$TAG" "$APK#KitabAlIman-v0.35.0.apk" --clobber
