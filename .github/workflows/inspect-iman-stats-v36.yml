@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: RED - verify new dashboard contract before code exists
+        run: python3 -m unittest tests.test_iman_v36 -v
       - name: Inspect original state schemas without compiling or changing data
         run: |
           python3 - <<'PY'
