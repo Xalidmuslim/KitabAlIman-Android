@@ -59,7 +59,7 @@ class MattePageV26Tests(unittest.TestCase):
         self.assertIn("app_before",script)
         self.assertIn("protected_assets",script)
         self.assertIn("R.drawable.iman_v26_unified_home",script)
-        self.assertIn("R.drawable.iman_v26_reminder",script)
+        self.assertIn('f"R.drawable.iman_v26_{name}"',script)
         self.assertIn('applicationIdSuffix \'.preview26\'',script)
         self.assertNotIn("RenderEffect",script)
         self.assertNotIn("BlurEffect",script)
