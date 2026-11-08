@@ -59,11 +59,24 @@ jobs:
             adb shell wm size 432x768
             adb shell wm density 160
             adb shell settings put system font_scale 1.0
-            adb shell am start -n com.xalid.meditsinaproroka.nativeapp.modulecopy.preview29/com.xalid.meditsinaproroka.nativeapp.MainActivity
-            sleep 14
+            PACKAGE=com.xalid.meditsinaproroka.nativeapp.modulecopy.preview29
+            adb shell pm path "$PACKAGE" | tee qa/package_path.txt
+            adb logcat -c
+            adb shell am force-stop "$PACKAGE" || true
+            adb shell am start -W -n "$PACKAGE/com.xalid.meditsinaproroka.nativeapp.MainActivity" | tee qa/activity_launch.txt
+            sleep 8
+            if ! adb shell pidof "$PACKAGE" >/dev/null; then
+              echo 'Explicit launch not active; retry launcher intent'
+              adb shell monkey -p "$PACKAGE" -c android.intent.category.LAUNCHER 1 | tee qa/launcher_retry.txt
+              sleep 8
+            fi
+            adb shell dumpsys activity activities > qa/activity_state.txt
+            adb logcat -d -v threadtime > qa/app_logcat.txt
+            adb shell pidof "$PACKAGE" | tee qa/app_pid.txt || true
             adb shell screencap -p /sdcard/iman_v29_home.png
             adb pull /sdcard/iman_v29_home.png qa/iman_v29_home.png
             test -s qa/iman_v29_home.png
+            test -s qa/app_pid.txt || (echo 'App crashed or wrong package; see app_logcat.txt' && exit 2)
 
       - name: Compare actual screen to approved user reference
         run: |
@@ -113,5 +126,11 @@ jobs:
             qa/iman_v29_home.png
             qa/reference_comparison.png
             qa/pixel_report.json
+            qa/package_path.txt
+            qa/activity_launch.txt
+            qa/activity_state.txt
+            qa/app_logcat.txt
+            qa/app_pid.txt
+            qa/launcher_retry.txt
           if-no-files-found: error
           retention-days: 7
