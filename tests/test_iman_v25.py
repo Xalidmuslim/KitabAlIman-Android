@@ -7,7 +7,7 @@ from pathlib import Path
 from PIL import Image
 import hashlib
 import unittest
-from scripts.build_iman_v25 import patch_shell, install_v25_reminder, NAV, QUOTE_MARKER
+from scripts.build_iman_v25 import patch_shell
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "assets/ui/v25"
