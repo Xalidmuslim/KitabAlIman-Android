@@ -27,10 +27,10 @@ def finish_paper(source:Image.Image)->Image.Image:
     size=base.size
     # Low, middle and fine frequencies model natural imperfect pulp fibers.
     for spacing,strength,seed in (
-        (53,7.5,2608),
-        (13,8.5,2609),
-        (3,5.4,2610),
-        (1,4.6,2611),
+        (53,3.5,2608),
+        (13,4.0,2609),
+        (3,3.9,2610),
+        (1,3.8,2611),
     ):
         base=ImageChops.add(base,_layer(size,spacing,strength,seed),offset=-128)
     # Sparse fine fibers, extremely low contrast; not procedural UI decoration.
