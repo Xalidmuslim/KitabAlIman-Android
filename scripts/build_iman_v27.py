@@ -69,8 +69,8 @@ def build_v27(kit:Path,dest:Path)->None:
     if a.replace("R.drawable.iman_v27_unified_home",
                  "R.drawable.iman_v26_unified_home")!=app_before:
         raise RuntimeError("v27: changed router, navigation or app state")
-    if a.count("R.drawable.iman_v27_unified_home")!=1 or NAV not in a or
-       ".background(if (seamlessHome) Color.Transparent" not in a.split(NAV,1)[1]:
+    if (a.count("R.drawable.iman_v27_unified_home")!=1 or NAV not in a or
+        ".background(if (seamlessHome) Color.Transparent" not in a.split(NAV,1)[1]):
         raise RuntimeError("v27: unified page background invariant violated")
     app.write_text(a,"utf-8")
 
