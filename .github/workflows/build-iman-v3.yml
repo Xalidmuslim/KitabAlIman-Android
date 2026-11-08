@@ -176,8 +176,8 @@ jobs:
           assert 'Brush.horizontalGradient' not in home_v30
           assert 'border = null' in quote_v30 and 'shadowElevation = 0.dp' in quote_v30
           assert 'R.drawable.iman_v36_reminder' in quote_v30
-          assert 'height(127.dp)' in quote_v30
-          assert 'width(272.dp).height(168.dp)' in quote_v30
+          assert 'height(100.dp)' in quote_v30
+          assert 'width(238.dp).height(142.dp)' in quote_v30
           assert 'showIllustration' in quote_v30
           assert 'R.drawable.iman_v17_quote' not in quote_v30
           assert 'R.drawable.iman_v29_unified_home' in app
@@ -206,8 +206,10 @@ jobs:
           assert 'Route.Progress' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'book.collections.take(2)' not in home_v30
           assert 'ImanReadingStatistics(book, store)' in home_v30
+          assert 'height(54.dp)' in home_v30
+          assert 'height(47.dp).clipToBounds()' in (src/'ReadingStatisticsV36.kt').read_text(encoding='utf-8')
           assert (src/'ReadingStatisticsV36.kt').is_file()
-          assert 'fillMaxWidth(0.60f)' in quote_v30
+          assert 'fillMaxWidth(0.58f)' in quote_v30
           assert 'ContentScale.FillBounds' not in quotes
           assert 'Crossfade(' in quotes
           assert 'Brush.horizontalGradient' not in quotes
