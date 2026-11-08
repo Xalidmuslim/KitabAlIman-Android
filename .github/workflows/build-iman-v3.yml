@@ -1,4 +1,4 @@
-name: Build Kitab al-Iman v0.22.0
+name: Build Kitab al-Iman v0.23.0
 
 on:
   push:
@@ -17,6 +17,7 @@ on:
       - codex/iman-art-directed-v20-20261108
       - codex/iman-borderless-editorial-v21-20261108
       - codex/iman-reading-paper-v22-20261108
+      - codex/iman-editorial-variant4-v23-20261108
   workflow_dispatch:
 
 permissions:
@@ -62,8 +63,8 @@ jobs:
       - name: Test book preservation, quotes and navigation
         run: python3 -m unittest discover -s tests -v
 
-      - name: Prepare native v0.22.0 application
-        run: python3 -m scripts.build_iman_v22 --dest AndroidApp
+      - name: Prepare native v0.23.0 application
+        run: python3 -m scripts.build_iman_v23 --dest AndroidApp
 
       - name: Check transformed source and data
         run: |
@@ -138,22 +139,27 @@ jobs:
           assert all(item in nav for item in (
               'NavItem("Главная"', 'NavItem("Оглавление"',
               'NavItem("Поиск"', 'NavItem("Закладки"', 'NavItem("Ещё"'))
-          home_v22 = (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
-          quote_v22 = (src/'ImanQuoteCarousel.kt').read_text(encoding='utf-8')
-          assert 'border = null' in home_v22 and 'shadowElevation = 0.dp' in home_v22
-          assert 'readerPaperOverlay("light")' in home_v22
-          assert 'R.drawable.reader_parchment_source' in home_v22
-          assert 'ContentScale.FillBounds' in home_v22
-          assert 'Brush.horizontalGradient' not in home_v22
-          assert 'border = null' in quote_v22 and 'shadowElevation = 0.dp' in quote_v22
-          assert 'R.drawable.reader_parchment_source' in quote_v22
-          assert 'R.drawable.iman_v17_quote' not in quote_v22
+          home_v23 = (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
+          quote_v23 = (src/'ImanQuoteCarousel.kt').read_text(encoding='utf-8')
+          assert 'border = null' in home_v23 and 'shadowElevation = 0.dp' in home_v23
+          assert 'Color(0xFFFCF8F3)' in home_v23
+          assert 'readerPaperOverlay(' not in home_v23
+          assert 'reader_parchment_source' not in home_v23
+          assert 'EditorialOrnamentDivider(' in home_v23
+          assert 'Brush.horizontalGradient' not in home_v23
+          assert 'border = null' in quote_v23 and 'shadowElevation = 0.dp' in quote_v23
+          assert 'reader_parchment_source' not in quote_v23
+          assert 'R.drawable.iman_v17_quote' not in quote_v23
+          assert 'Color(0xFFFCF8F3)' in nav
+          for name in ('contents','collections','glossary','bookmarks'):
+              assert 'R.drawable.iman_v23_' + name in home_v23
+              assert (root/'app/src/main/res/drawable-nodpi'/('iman_v23_' + name + '.webp')).stat().st_size > 350
           assert 'Route.More -> ImanV38MoreScreen(screenModifier, ::navigate)' in app
           assert 'ЛИЧНАЯ БИБЛИОТЕКА' in (src/'ImanV38More.kt').read_text(encoding='utf-8')
           quotes=(src/'ImanQuoteCarousel.kt').read_text(encoding='utf-8')
           assert 'Другая ↻' in quotes
           assert quotes.count('FeaturedExcerpt("iman-chapter-')==79
-          assert 'R.drawable.reader_parchment_source' in quotes
+          assert 'R.drawable.reader_parchment_source' not in quotes
           assert 'R.drawable.iman_v17_quote' not in quotes
           assert 'maxLines = 5' in quotes
           assert 'ModernEditorialHomeScreen(book, store, modifier' in (src/'IbnQayyimStyle.kt').read_text(encoding='utf-8')
@@ -161,7 +167,7 @@ jobs:
           assert 'R.drawable.iman_v17_contents' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'Route.Progress' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'ContentScale.FillBounds' not in quotes
-          assert 'ContentScale.Crop' in quotes
+          assert 'Crossfade(' in quotes
           assert 'Brush.horizontalGradient' not in quotes
           assert quotes.index('Text("Другая ↻"') < quotes.index('imanExcerpts[itemIndex].text')
           assert (root/'app/src/main/res/drawable-nodpi/iman_quote_v15.webp').stat().st_size > 10000
@@ -172,10 +178,10 @@ jobs:
           assert len(quote_data)==79
           assert len(set(q['text'] for q in quote_data))==79
           assert len(set(q['chapterId'] for q in quote_data))>=50
-          assert 'heightIn(min = 78.dp)' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
+          assert 'heightIn(min = 74.dp)' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'EditorialResumeCard(' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'Crossfade(' in quotes
-          assert 'width = 58.dp, height = 60.dp' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
+          assert 'width = 62.dp, height = 64.dp' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'Route.Book' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'Route.Bookmarks' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'Бесплатный нейроголос RuVoice (установка)' not in reader
@@ -238,7 +244,7 @@ jobs:
       - name: Publish installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.22.0-Release-APK
+          name: KitabAlIman-v0.23.0-Release-APK
           path: AndroidApp/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 7
@@ -249,9 +255,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          TAG=v0.22.0
+          TAG=v0.23.0
           APK=AndroidApp/app/build/outputs/apk/release/app-release.apk
           if ! gh release view "$TAG" >/dev/null 2>&1; then
-            gh release create "$TAG" --target "$GITHUB_SHA" --title "Книга Имана v0.22.0" --notes "Светлый фон из читалки на главном экране, старинный фон напоминания, компактные иллюстрации библиотеки."
+            gh release create "$TAG" --target "$GITHUB_SHA" --title "Книга Имана v0.23.0" --notes "Четвёртый дизайн: без рамок, чистый фон, тонкие разделители и четыре новые матовые иконки библиотеки."
           fi
-          gh release upload "$TAG" "$APK#KitabAlIman-v0.22.0.apk" --clobber
+          gh release upload "$TAG" "$APK#KitabAlIman-v0.23.0.apk" --clobber
