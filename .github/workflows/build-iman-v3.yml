@@ -1,4 +1,4 @@
-name: Build Kitab al-Iman v0.26.0
+name: Build Kitab al-Iman v0.27.0
 
 on:
   push:
@@ -21,6 +21,7 @@ on:
       - codex/iman-reference-light-art-v24-20261108
       - codex/iman-seamless-reference-v25-20261108
       - codex/iman-seamless-texture-v26-20261108
+      - codex/iman-reference-art-v27-20261108
   workflow_dispatch:
 
 permissions:
@@ -63,11 +64,24 @@ jobs:
       - name: Install Pillow for verified source artwork
         run: python3 -m pip install --disable-pip-version-check Pillow==12.3.0
 
+      - name: Import generated illustrations into permanent repository assets (first run only)
+        run: |
+          set -euo pipefail
+          if [ ! -s assets/ui/v27/iman_v27_unified_home.webp ]; then
+            python3 -m pip install --disable-pip-version-check numpy==2.2.6
+            python3 -m scripts.iman_v27_import
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add assets/ui/v27
+            git commit -m "assets: persist six generated reference illustrations [skip ci]"
+            git push origin HEAD:codex/iman-reference-art-v27-20261108
+          fi
+
       - name: Test book preservation, quotes and navigation
         run: python3 -m unittest discover -s tests -v
 
-      - name: Prepare native v0.26.0 application
-        run: python3 -m scripts.build_iman_v26 --dest AndroidApp
+      - name: Prepare native v0.27.0 application
+        run: python3 -m scripts.build_iman_v27 --dest AndroidApp
 
       - name: Check transformed source and data
         run: |
@@ -142,30 +156,30 @@ jobs:
           assert all(item in nav for item in (
               'NavItem("Главная"', 'NavItem("Оглавление"',
               'NavItem("Поиск"', 'NavItem("Закладки"', 'NavItem("Ещё"'))
-          home_v26 = (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
-          quote_v26 = (src/'ImanQuoteCarousel.kt').read_text(encoding='utf-8')
-          assert 'border = null' in home_v26 and 'shadowElevation = 0.dp' in home_v26
-          assert 'readerPaperOverlay(' not in home_v26
-          assert 'reader_parchment_source' not in home_v26
-          assert 'Column(modifier.fillMaxSize())' in home_v26
-          assert 'item(key = "library-four")' in home_v26
-          assert 'LinearProgressIndicator(' in home_v26
-          assert 'Brush.horizontalGradient' not in home_v26
-          assert 'border = null' in quote_v26 and 'shadowElevation = 0.dp' in quote_v26
-          assert 'R.drawable.iman_v26_reminder' in quote_v26
-          assert 'Modifier.weight(0.61f)' in quote_v26
-          assert 'Modifier.weight(0.39f)' in quote_v26
-          assert 'showIllustration' in quote_v26
-          assert 'R.drawable.iman_v17_quote' not in quote_v26
-          assert 'R.drawable.iman_v26_unified_home' in app
+          home_v27 = (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
+          quote_v27 = (src/'ImanQuoteCarousel.kt').read_text(encoding='utf-8')
+          assert 'border = null' in home_v27 and 'shadowElevation = 0.dp' in home_v27
+          assert 'readerPaperOverlay(' not in home_v27
+          assert 'reader_parchment_source' not in home_v27
+          assert 'Column(modifier.fillMaxSize())' in home_v27
+          assert 'item(key = "library-four")' in home_v27
+          assert 'LinearProgressIndicator(' in home_v27
+          assert 'Brush.horizontalGradient' not in home_v27
+          assert 'border = null' in quote_v27 and 'shadowElevation = 0.dp' in quote_v27
+          assert 'R.drawable.iman_v27_reminder' in quote_v27
+          assert 'Modifier.weight(0.61f)' in quote_v27
+          assert 'Modifier.weight(0.39f)' in quote_v27
+          assert 'showIllustration' in quote_v27
+          assert 'R.drawable.iman_v17_quote' not in quote_v27
+          assert 'R.drawable.iman_v27_unified_home' in app
           assert 'val seamlessHome = current == Route.Home' in app
           assert 'seamlessHome = seamlessHome' in app
           assert '.background(if (seamlessHome) Color.Transparent' in nav
           for name in ('contents','collections','glossary','bookmarks'):
-              assert 'R.drawable.iman_v26_' + name in home_v26
-              assert (root/'app/src/main/res/drawable-nodpi'/('iman_v26_' + name + '.webp')).stat().st_size > 3000
-          assert (root/'app/src/main/res/drawable-nodpi/iman_v26_reminder.webp').stat().st_size > 3000
-          assert (root/'app/src/main/res/drawable-nodpi/iman_v26_unified_home.webp').stat().st_size > 3000
+              assert 'R.drawable.iman_v27_' + name in home_v27
+              assert (root/'app/src/main/res/drawable-nodpi'/('iman_v27_' + name + '.webp')).stat().st_size > 3000
+          assert (root/'app/src/main/res/drawable-nodpi/iman_v27_reminder.webp').stat().st_size > 3000
+          assert (root/'app/src/main/res/drawable-nodpi/iman_v27_unified_home.webp').stat().st_size > 3000
           assert 'Route.More -> ImanV38MoreScreen(screenModifier, ::navigate)' in app
           assert 'ЛИЧНАЯ БИБЛИОТЕКА' in (src/'ImanV38More.kt').read_text(encoding='utf-8')
           quotes=(src/'ImanQuoteCarousel.kt').read_text(encoding='utf-8')
@@ -176,7 +190,7 @@ jobs:
           assert 'maxLines = 5' in quotes
           assert 'ModernEditorialHomeScreen(book, store, modifier' in (src/'IbnQayyimStyle.kt').read_text(encoding='utf-8')
           assert 'SepiaMiniStat(' not in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
-          assert 'R.drawable.iman_v26_contents' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
+          assert 'R.drawable.iman_v27_contents' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'Route.Progress' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'ContentScale.FillBounds' not in quotes
           assert 'Crossfade(' in quotes
@@ -256,7 +270,7 @@ jobs:
       - name: Publish installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.26.0-Release-APK
+          name: KitabAlIman-v0.27.0-Release-APK
           path: AndroidApp/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 7
@@ -277,18 +291,18 @@ jobs:
             adb shell wm size 432x768
             adb shell wm density 192
             adb shell settings put system font_scale 1.0
-            adb shell am start -n com.xalid.meditsinaproroka.nativeapp.modulecopy.preview25/com.xalid.meditsinaproroka.nativeapp.MainActivity
+            adb shell am start -n com.xalid.meditsinaproroka.nativeapp.modulecopy.preview27/com.xalid.meditsinaproroka.nativeapp.MainActivity
             sleep 9
             mkdir -p qa
-            adb shell screencap -p /sdcard/iman_v26_home.png
-            adb pull /sdcard/iman_v26_home.png qa/iman_v26_home.png
+            adb shell screencap -p /sdcard/iman_v27_home.png
+            adb pull /sdcard/iman_v27_home.png qa/iman_v27_home.png
 
       - name: Upload actual-emulator Home screenshot
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.26.0-Visual-QA
-          path: qa/iman_v26_home.png
+          name: KitabAlIman-v0.27.0-Visual-QA
+          path: qa/iman_v27_home.png
           if-no-files-found: warn
           retention-days: 7
 
@@ -298,9 +312,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          TAG=v0.26.0
+          TAG=v0.27.0
           APK=AndroidApp/app/build/outputs/apk/release/app-release.apk
           if ! gh release view "$TAG" >/dev/null 2>&1; then
-            gh release create "$TAG" --target "$GITHUB_SHA" --title "Книга Имана v0.26.0" --notes "Единый безрамочный фон главного экрана и навигации, шесть оригинальных реалистичных рисунков; содержимое книги сохранено."
+            gh release create "$TAG" --target "$GITHUB_SHA" --title "Книга Имана v0.27.0" --notes "Единый безрамочный фон главного экрана и навигации, шесть оригинальных реалистичных рисунков; содержимое книги сохранено."
           fi
-          gh release upload "$TAG" "$APK#KitabAlIman-v0.26.0.apk" --clobber
+          gh release upload "$TAG" "$APK#KitabAlIman-v0.27.0.apk" --clobber
