@@ -1,4 +1,4 @@
-name: Build Kitab al-Iman v0.20.0
+name: Build Kitab al-Iman v0.21.0
 
 on:
   push:
@@ -15,6 +15,7 @@ on:
       - codex/iman-modern-editorial-v18-20261107
       - codex/iman-editorial-premium-v19-20261107
       - codex/iman-art-directed-v20-20261108
+      - codex/iman-borderless-editorial-v21-20261108
   workflow_dispatch:
 
 permissions:
@@ -60,8 +61,8 @@ jobs:
       - name: Test book preservation, quotes and navigation
         run: python3 -m unittest discover -s tests -v
 
-      - name: Prepare native v0.20.0 application
-        run: python3 -m scripts.build_iman_v20 --dest AndroidApp
+      - name: Prepare native v0.21.0 application
+        run: python3 -m scripts.build_iman_v21 --dest AndroidApp
 
       - name: Check transformed source and data
         run: |
@@ -129,6 +130,17 @@ jobs:
           assert (src/'IbnV38StudyEngine.kt').is_file()
           assert (src/'IbnQayyimStyle.kt').is_file()
           assert 'NavItem("Оглавление", R.drawable.nav_topics' in app
+          # Borderless editorial v21: exact route/icon set, no decorative shell frame.
+          nav = app.split('@Composable\nprivate fun StandaloneBottomNav(', 1)[1]
+          assert 'val panelShape = RoundedCornerShape(0.dp)' in nav
+          assert '.border(' not in nav and 'antique_card_paper' not in nav
+          assert all(item in nav for item in (
+              'NavItem("Главная"', 'NavItem("Оглавление"',
+              'NavItem("Поиск"', 'NavItem("Закладки"', 'NavItem("Ещё"'))
+          home_v21 = (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
+          quote_v21 = (src/'ImanQuoteCarousel.kt').read_text(encoding='utf-8')
+          assert 'border = null' in home_v21 and 'shadowElevation = 0.dp' in home_v21
+          assert 'border = null' in quote_v21 and 'shadowElevation = 0.dp' in quote_v21
           assert 'Route.More -> ImanV38MoreScreen(screenModifier, ::navigate)' in app
           assert 'ЛИЧНАЯ БИБЛИОТЕКА' in (src/'ImanV38More.kt').read_text(encoding='utf-8')
           quotes=(src/'ImanQuoteCarousel.kt').read_text(encoding='utf-8')
@@ -217,7 +229,7 @@ jobs:
       - name: Publish installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.20.0-Release-APK
+          name: KitabAlIman-v0.21.0-Release-APK
           path: AndroidApp/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 7
@@ -228,9 +240,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          TAG=v0.20.0
+          TAG=v0.21.0
           APK=AndroidApp/app/build/outputs/apk/release/app-release.apk
           if ! gh release view "$TAG" >/dev/null 2>&1; then
-            gh release create "$TAG" --target "$GITHUB_SHA" --title "Книга Имана v0.20.0" --notes "Книжный интерфейс с мягкой глубиной, выразительными 3D-иллюстрациями, анимированной сменой 79 напоминаний и прежними функциями чтения."
+            gh release create "$TAG" --target "$GITHUB_SHA" --title "Книга Имана v0.21.0" --notes "Безрамочный книжный интерфейс, сохранённые 79 напоминаний, нижняя навигация и чтение."
           fi
-          gh release upload "$TAG" "$APK#KitabAlIman-v0.20.0.apk" --clobber
+          gh release upload "$TAG" "$APK#KitabAlIman-v0.21.0.apk" --clobber
