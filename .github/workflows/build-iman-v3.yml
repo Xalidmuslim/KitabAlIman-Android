@@ -176,7 +176,7 @@ jobs:
           assert 'Brush.horizontalGradient' not in home_v30
           assert 'border = null' in quote_v30 and 'shadowElevation = 0.dp' in quote_v30
           assert 'R.drawable.iman_v36_reminder' in quote_v30
-          assert 'height(100.dp)' in quote_v30
+          assert 'height(92.dp)' in quote_v30
           assert 'width(238.dp).height(142.dp)' in quote_v30
           assert 'showIllustration' in quote_v30
           assert 'R.drawable.iman_v17_quote' not in quote_v30
@@ -320,6 +320,10 @@ jobs:
             adb shell wm size 432x768
             adb shell wm density 160
             adb shell settings put system font_scale 1.0
+            # The approved user reference uses gesture navigation. Try the same
+            # Android system mode; retain a usable fallback on older emulator images.
+            adb shell cmd overlay enable com.android.internal.systemui.navbar.gestural || true
+            adb shell settings put secure navigation_mode 2 || true
             adb shell am start -W -n com.xalid.kitabaliman.preview36/com.xalid.meditsinaproroka.nativeapp.MainActivity
             sleep 9
             mkdir -p qa
