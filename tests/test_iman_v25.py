@@ -40,7 +40,7 @@ class SeamlessPageV25Tests(unittest.TestCase):
         self.assertIn("Modifier.matchParentSize()", shell)
         self.assertIn("ContentScale.FillBounds", shell)
         self.assertIn("current == Route.Home", shell)
-        self.assertIn("seamlessHome = seamlessHome", shell)
+        self.assertIn("seamlessHome = seamlessHome", (ROOT / "scripts/build_iman_v25.py").read_text("utf-8"))
         self.assertIn("Color.Transparent", shell)
 
     def test_home_does_not_repaint_over_root_background(self):
