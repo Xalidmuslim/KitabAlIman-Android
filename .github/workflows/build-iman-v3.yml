@@ -278,15 +278,26 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+      # Real emulator screenshot QA; failed launch must not masquerade as success.
+      - name: Enable KVM for Android emulator
+        run: |
+          if [ -e /dev/kvm ]; then
+            echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+            sudo udevadm control --reload-rules
+            sudo udevadm trigger --name-match=kvm
+          fi
+
       # Preview-only screenshot QA on a fresh emulator; independent from APK signing.
       - name: Render Home on Android emulator for visual QA
         uses: reactivecircus/android-emulator-runner@v2
-        continue-on-error: true
         with:
-          api-level: 35
+          api-level: 29
           target: google_apis
           arch: x86_64
-          profile: pixel_6
+          profile: pixel_2
+          ram-size: 2048M
+          emulator-boot-timeout: 600
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: |
             set -e
@@ -294,7 +305,7 @@ jobs:
             adb shell wm size 432x768
             adb shell wm density 160
             adb shell settings put system font_scale 1.0
-            adb shell am start -n com.xalid.meditsinaproroka.nativeapp.modulecopy.preview29/com.xalid.meditsinaproroka.nativeapp.MainActivity
+            adb shell am start -W -n com.xalid.kitabaliman.preview29/com.xalid.meditsinaproroka.nativeapp.MainActivity
             sleep 9
             mkdir -p qa
             adb shell screencap -p /sdcard/iman_v29_home.png
@@ -306,7 +317,7 @@ jobs:
         with:
           name: KitabAlIman-v0.29.0-Visual-QA
           path: qa/iman_v29_home.png
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 7
 
       - name: Publish direct-download GitHub Release
