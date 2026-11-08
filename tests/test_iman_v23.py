@@ -49,7 +49,7 @@ class EditorialReferenceV23Tests(unittest.TestCase):
                   "".join('NavItem("'+label+'", icon, selected, action)\n' for label in \
                           ("Главная", "Оглавление", "Поиск", "Закладки", "Ещё"))
         converted=patch_nav_background(snippet)
-        self.assertIn('NavItem("Главная" action)',converted)
+        self.assertIn('NavItem("Главная", icon, selected, action)',converted)
         self.assertIn("Color(0xFFFCF8F3)",converted)
 
     def test_artwork_bundle_present_and_not_blank(self):
