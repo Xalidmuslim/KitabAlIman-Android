@@ -40,7 +40,7 @@ def build_v33(kit:Path,dest:Path):
 
     target_home=(kit/"scripts/ReferenceHomeV33.kt").read_text("utf-8")
     target_quote=(kit/"scripts/ReferenceQuoteV33.kt").read_text("utf-8")
-    if ("Modifier.fillMaxSize().padding(bottom = 76.dp).clipToBounds()" not in target_home or
+    if ("modifier.fillMaxSize().padding(bottom = 76.dp).clipToBounds()" not in target_home or
         ".statusBarsPadding()" in target_home or
         "book.collections.take(2)" not in target_home or
         "Route.Reader(it.id, resume = last != null)" not in target_home or
