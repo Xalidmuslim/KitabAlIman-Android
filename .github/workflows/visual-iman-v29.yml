@@ -59,7 +59,7 @@ jobs:
             adb shell wm size 432x768
             adb shell wm density 160
             adb shell settings put system font_scale 1.0
-            PACKAGE=com.xalid.meditsinaproroka.nativeapp.modulecopy.preview29
+            PACKAGE=com.xalid.kitabaliman.preview29
             adb shell pm path "$PACKAGE" | tee qa/package_path.txt
             adb logcat -c
             adb shell am force-stop "$PACKAGE" || true
