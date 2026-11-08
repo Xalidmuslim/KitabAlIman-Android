@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - codex/iman-home-refinement-v38-20261108
+  pull_request:
+    branches:
+      - codex/iman-real-device-layout-fix-v37-20261108
   workflow_dispatch:
 
 permissions:
