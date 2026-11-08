@@ -27,7 +27,7 @@ class IntegratedDashboardV38(unittest.TestCase):
         src=(ROOT/"scripts/ReadingStatisticsV38.kt").read_text("utf-8")
         self.assertIn('Modifier.weight(1f)', src)
         self.assertIn('dayNames[index]', src)
-        self.assertIn('"\${minutes} м"', src)
+        self.assertIn('"${minutes} м"', src)
         self.assertIn('ledger.daysAgo(', src)
         self.assertNotIn('Arrangement.SpaceBetween', src)
         self.assertNotIn('i * size.width / 6f', src)
