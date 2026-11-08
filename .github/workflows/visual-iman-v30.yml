@@ -1,0 +1,113 @@
+name: Kitab al-Iman v30 real-screen visual comparison
+
+on:
+  push:
+    branches:
+      - codex/iman-qa-v30-20261108
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  screenshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch verified signed v30 APK from GitHub Actions
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p qa/bin
+          gh run download 42485683860 -n KitabAlIman-v0.30.0-Release-APK -D qa/bin
+          test -s qa/bin/app-release.apk
+          unzip -t qa/bin/app-release.apk > /dev/null
+          ls -lh qa/bin/app-release.apk
+
+      - name: Enable KVM on hosted Linux for reliable Android boot
+        run: |
+          set -e
+          if [ -e /dev/kvm ]; then
+            echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+            sudo udevadm control --reload-rules
+            sudo udevadm trigger --name-match=kvm
+            ls -l /dev/kvm
+          else
+            echo 'No KVM device supplied by runner; emulator will attempt software boot.'
+          fi
+
+      - name: Start Android API 29 and capture actual Compose home
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          cores: 2
+          ram-size: 2048M
+          emulator-boot-timeout: 600
+          force-avd-creation: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none -camera-front none
+          disable-animations: true
+          script: bash scripts/qa_iman_v30_emulator.sh
+
+      - name: Compare actual screen to approved user reference
+        run: |
+          set -euo pipefail
+          python3 -m pip install Pillow==12.3.0 numpy==2.2.6
+          curl -fLSs --retry 2 --max-time 45 'https://pikaso.cdnpk.net/private/production/5974181197/3839874915.png?token=exp=1794441600~hmac=5bb58b82afecd5eb26932f3b0a6bb6bf047e63c4d7469134dbdf9a99adeda362' -o qa/approved_reference.png
+          python3 - <<'PY'
+          from PIL import Image,ImageChops,ImageEnhance,ImageDraw
+          from pathlib import Path
+          import numpy as np, json
+          screenshot=Image.open('qa/iman_v30_home.png').convert('RGB')
+          reference=Image.open('qa/approved_reference.png').convert('RGB')
+          assert screenshot.size==(432,768),f'Emulator screenshot dimensions: {screenshot.size}'
+          assert reference.size==(941,1672)
+          expected=reference.resize(screenshot.size,Image.Resampling.LANCZOS)
+          w,h=screenshot.size
+          result=Image.new('RGB',(w*3,h),'white')
+          result.paste(expected,(0,0))
+          result.paste(screenshot,(w,0))
+          result.paste(Image.blend(expected,screenshot,.5),(2*w,0))
+          ImageDraw.Draw(result).line((w,0,w,h),fill='#201c18',width=2)
+          ImageDraw.Draw(result).line((2*w,0,2*w,h),fill='#201c18',width=2)
+          result.save('qa/reference_comparison.png')
+          aa=np.asarray(expected,dtype=np.float32)
+          bb=np.asarray(screenshot,dtype=np.float32)
+          # Avoid dynamic quote regions and status bar for printed diagnostic.
+          edges=np.r_[np.arange(4,14),np.arange(w-14,w-4)]
+          yy=np.arange(100,687)
+          ta=aa[np.ix_(yy,edges)]
+          ra=bb[np.ix_(yy,edges)]
+          stats={'reference_size':reference.size,'emulator_size':screenshot.size,
+                 'edge_background_color_ref':np.mean(ta,axis=(0,1)).round(2).tolist(),
+                 'edge_background_color_rendered':np.mean(ra,axis=(0,1)).round(2).tolist(),
+                 'edge_background_mean_absolute_error':float(np.mean(np.abs(ra-ta))),
+                 'whole_image_mean_absolute_error':float(np.mean(np.abs(aa-bb))),
+                 'strict_pixel_perfect':bool(np.max(np.abs(aa-bb))==0)}
+          Path('qa/pixel_report.json').write_text(json.dumps(stats,ensure_ascii=False,indent=2))
+          print(json.dumps(stats,indent=2))
+          PY
+
+      - name: Publish actual screenshot and pixel overlay
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Iman-v30-Actual-Android-Pixel-Compare
+          path: |
+            qa/iman_v30_home.png
+            qa/reference_comparison.png
+            qa/pixel_report.json
+            qa/package_path.txt
+            qa/activity_launch.txt
+            qa/activity_state.txt
+            qa/app_logcat.txt
+            qa/app_pid.txt
+            qa/launcher_retry.txt
+          if-no-files-found: error
+          retention-days: 7
