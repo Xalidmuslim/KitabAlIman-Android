@@ -7,21 +7,22 @@ ROOT = Path(__file__).resolve().parents[1]
 class RealDeviceLayoutV37(unittest.TestCase):
     def test_quotes_show_complete_source_text_without_fixed_height_truncation(self):
         text = (ROOT / "scripts/ReferenceQuoteV37.kt").read_text("utf-8")
-        self.assertIn('heightIn(min = 132.dp)', text)
-        self.assertNotIn('.height(92.dp)', text)
+        self.assertIn('heightIn(min = 92.dp)', text)
+        self.assertNotIn('Modifier.fillMaxWidth().height(92.dp)', text)
         self.assertNotIn('maxLines = 5', text)
         self.assertNotIn('TextOverflow.Ellipsis', text)
         self.assertIn('Route.Reader(q.chapterId, q.blockId)', text)
         self.assertIn('ImanCaveatFont', text)
         self.assertIn('Crossfade(', text)
-        self.assertIn('width(190.dp).height(132.dp)', text)
+        self.assertIn('width(190.dp).height(92.dp)', text)
         self.assertNotIn('.offset(x = 24.dp', text)
 
     def test_full_chapter_titles_and_unframed_library(self):
         home = (ROOT / "scripts/ReferenceHomeV37.kt").read_text("utf-8")
-        self.assertIn('height(64.dp)', home)
-        self.assertIn('heightIn(min = 92.dp)', home)
+        self.assertIn('height(58.dp)', home)
+        self.assertIn('heightIn(min = 76.dp)', home)
         self.assertIn('ImanReadingStatistics(book, store)', home)
+        self.assertIn('verticalArrangement = Arrangement.spacedBy(0.dp)', home)
         self.assertIn('navigate(Route.Bookmarks)', home)
         self.assertIn('navigate(Route.Progress)', home)
         resume = home.split('private fun EditorialResumeCard(', 1)[1].split('@Composable', 1)[0]
@@ -32,8 +33,8 @@ class RealDeviceLayoutV37(unittest.TestCase):
 
     def test_statistics_are_real_and_readable(self):
         stats = (ROOT / "scripts/ReadingStatisticsV37.kt").read_text("utf-8")
-        self.assertIn('height(56.dp).clipToBounds()', stats)
-        self.assertIn('heightIn(min = 24.dp)', stats)
+        self.assertIn('height(42.dp).clipToBounds()', stats)
+        self.assertIn('heightIn(min = 18.dp)', stats)
         self.assertIn('width(32.dp)', stats)
         for token in ('ledger.daysAgo(', 'chapterReadFraction(', 'store.quizBestPercent', 'book.collections'):
             self.assertIn(token, stats)
