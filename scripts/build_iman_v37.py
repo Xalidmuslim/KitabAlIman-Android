@@ -39,6 +39,11 @@ def build_v37(kit: Path, dest: Path) -> None:
     gradle.write_text(text, "utf-8")
 
     home = (kit / "scripts/ReferenceHomeV37.kt").read_text("utf-8")
+    # Match the approved v0.35 matte icons reused by the verified v0.36 build.
+    for name in ("contents", "collections", "glossary", "bookmarks"):
+        home = replace_one(home, f"R.drawable.iman_v32_{name}",
+                           f"R.drawable.iman_v35_{name}",
+                           "retain approved library illustrations")
     quote = (kit / "scripts/ReferenceQuoteV37.kt").read_text("utf-8")
     stats = (kit / "scripts/ReadingStatisticsV37.kt").read_text("utf-8")
     if "ImanReadingStatistics(book, store)" not in home or "maxLines = 5" in quote:
