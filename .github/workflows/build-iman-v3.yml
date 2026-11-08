@@ -252,6 +252,14 @@ jobs:
           "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$APK" | grep '^package:'
           sha256sum "$APK"
 
+      - name: Publish installable APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: KitabAlIman-v0.25.0-Release-APK
+          path: AndroidApp/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+          retention-days: 7
+
       # Preview-only screenshot QA on a fresh emulator; independent from APK signing.
       - name: Render Home on Android emulator for visual QA
         uses: reactivecircus/android-emulator-runner@v2
@@ -281,14 +289,6 @@ jobs:
           name: KitabAlIman-v0.25.0-Visual-QA
           path: qa/iman_v25_home.png
           if-no-files-found: warn
-          retention-days: 7
-
-      - name: Publish installable APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: KitabAlIman-v0.25.0-Release-APK
-          path: AndroidApp/app/build/outputs/apk/release/app-release.apk
-          if-no-files-found: error
           retention-days: 7
 
       - name: Publish direct-download GitHub Release
