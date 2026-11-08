@@ -1,7 +1,7 @@
 """Visual reference #4: frameless book editor UI, handcrafted gallery icons, preserved paths."""
 import unittest
 from pathlib import Path
-from scripts.build_iman_v23 import install_variant4_quote, QUOTE_MARKER, patch_nav_background
+from scripts.build_iman_v23 import install_variant4_quote, QUOTE_MARKER, patch_nav_background, NAV
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -39,13 +39,15 @@ class EditorialReferenceV23Tests(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             install_variant4_quote("broken",new)
         base='FeaturedExcerpt("iman-chapter-007", "b1", "source"),\n'*79
-        result=install_variant4_quote(base+QUOTE_MARKER+"old",new)
+        result=install_variant4_quote(base+QUOTE_MARKER+"old_body",new)
         self.assertEqual(result.count('FeaturedExcerpt("iman-chapter-'),79)
-        self.assertNotIn("old",result)
+        self.assertNotIn("old_body",result)
 
     def test_nav_background_only_not_tab_actions(self):
-        snippet = "start "+ 'val panelShape = RoundedCornerShape(0.dp)' + " middle "+\
-                  "Color(0xFFF7F3EC)" + ' NavItem("Главная" action)'
+        snippet = "prefix " + NAV + "\n" + "val panelShape = RoundedCornerShape(0.dp)\n" + \
+                  "Color(0xFFF7F3EC)\n" + \
+                  "".join('NavItem("'+label+'", icon, selected, action)\n' for label in \
+                          ("Главная", "Оглавление", "Поиск", "Закладки", "Ещё"))
         converted=patch_nav_background(snippet)
         self.assertIn('NavItem("Главная" action)',converted)
         self.assertIn("Color(0xFFFCF8F3)",converted)
