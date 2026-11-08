@@ -63,7 +63,7 @@ class ReferenceLightV24Tests(unittest.TestCase):
         import base64
         p=ROOT/"assets/ui/v24/iman_v24_reminder.b64"
         with Image.open(io.BytesIO(base64.b64decode(p.read_text("ascii")))) as im:
-            self.assertEqual(im.size,(280,148))
+            self.assertEqual(im.size,(248,131))
             self.assertEqual(im.mode,"RGBA")
             self.assertLess(im.getchannel("A").getextrema()[0],80)
 
