@@ -113,7 +113,7 @@ internal fun ImanReadingStatistics(book: BookData, store: AppStore, openMore: ()
                 Spacer(Modifier.height(2.dp))
                 topics.forEach { (name, fraction) ->
                     // Reference: title, progress and percentage live on one baseline.
-                    Row(Modifier.fillMaxWidth().height(20.dp),
+                    Row(Modifier.fillMaxWidth().height(14.dp),
                         verticalAlignment = Alignment.CenterVertically) {
                         Text(name, fontFamily = WebSansFont, fontSize = 9.5.sp,
                             lineHeight = 11.sp, color = ink, maxLines = 1,
@@ -132,7 +132,7 @@ internal fun ImanReadingStatistics(book: BookData, store: AppStore, openMore: ()
                 }
             }
         }
-        Spacer(Modifier.height(4.dp))
+        Spacer(Modifier.height(0.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(13.dp)) {
             Column(Modifier.weight(1f)) {
                 StatSectionTitle("Усвоение", ink)
@@ -175,10 +175,10 @@ internal fun ImanReadingStatistics(book: BookData, store: AppStore, openMore: ()
                 Spacer(Modifier.height(6.dp))
                 Text("Проверено глав: $tested", fontFamily = WebSansFont,
                     fontSize = 11.sp, color = ink)
-                Spacer(Modifier.height(6.dp))
+                Spacer(Modifier.height(2.dp))
                 Text("Средний лучший: " + (average?.let { "$it%" } ?: "—"),
                     fontFamily = WebSansFont, fontSize = 10.sp, color = ink)
-                Spacer(Modifier.height(6.dp))
+                Spacer(Modifier.height(2.dp))
                 Text("Подробнее →", fontFamily = WebSansFont,
                     fontSize = 10.sp, color = bronze,
                     modifier = Modifier.clickable(onClick = openMore))
