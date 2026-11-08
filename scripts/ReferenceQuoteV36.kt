@@ -61,7 +61,7 @@ internal fun ImanFeaturedQuoteCarousel(navigate: (Route) -> Unit) {
                     // forcing a huge 174dp Row. A fixed-height Box gives the art
                     // independent width without letting it dictate vertical rhythm.
                     Box(
-                        modifier = Modifier.fillMaxWidth().height(100.dp),
+                        modifier = Modifier.fillMaxWidth().height(92.dp),
                     ) {
                         Image(
                             painter = MedicineHomeArtwork.painter(R.drawable.iman_v36_reminder),
