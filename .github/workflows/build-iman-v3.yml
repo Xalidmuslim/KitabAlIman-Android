@@ -69,7 +69,12 @@ jobs:
         run: python3 scripts/unpack_v6.py
 
       - name: Install Pillow for verified source artwork
-        run: python3 -m pip install --disable-pip-version-check Pillow==12.3.0 numpy==2.2.6
+        run: |
+          if python3 -c "import PIL, numpy"; then
+            echo "Using preinstalled image libraries"
+          else
+            python3 -m pip install --disable-pip-version-check --timeout 15 --retries 1 Pillow==12.3.0 numpy==2.2.6
+          fi
 
       - name: Create paper texture from approved reference (first run only)
         run: |
