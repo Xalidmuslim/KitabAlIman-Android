@@ -58,10 +58,10 @@ class EditorialReferenceV23Tests(unittest.TestCase):
         import base64,io
         from PIL import Image
         image=Image.open(io.BytesIO(base64.b64decode(atlas.read_text("ascii").strip(),validate=True)))
-        self.assertEqual(image.size,(384,96))
+        self.assertEqual(image.size,(320,80))
         self.assertEqual(image.mode,"RGB")
-        for x in range(0,384,96):
-            icon=image.crop((x,0,x+96,96)).convert("L")
+        for x in range(0,320,80):
+            icon=image.crop((x,0,x+80,80)).convert("L")
             self.assertLess(icon.getextrema()[0],180)  # visible brown book illustration
             self.assertGreater(icon.getextrema()[1],240)  # pale seamless canvas
 
