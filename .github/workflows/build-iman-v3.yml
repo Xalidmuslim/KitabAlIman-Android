@@ -222,10 +222,10 @@ jobs:
           assert len(quote_data)==79
           assert len(set(q['text'] for q in quote_data))==79
           assert len(set(q['chapterId'] for q in quote_data))>=50
-          assert 'heightIn(min = 96.dp)' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
+          assert 'heightIn(min = 76.dp)' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'EditorialResumeCard(' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'Crossfade(' in quotes
-          assert 'Modifier.fillMaxWidth().height(70.dp)' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
+          assert 'Modifier.fillMaxWidth().height(54.dp)' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'Route.Book' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'Route.Bookmarks' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'Бесплатный нейроголос RuVoice (установка)' not in reader
