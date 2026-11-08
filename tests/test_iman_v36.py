@@ -15,7 +15,8 @@ class StatisticsReferenceV36(unittest.TestCase):
         self.assertNotIn("68%", stats)
         self.assertNotIn("72%", stats)
         self.assertNotIn("88%", stats)
-        self.assertIn("height(47.dp).clipToBounds()",stats)
+        self.assertIn("height(35.dp).clipToBounds()",stats)
+        self.assertIn("Modifier.fillMaxWidth().height(20.dp)",stats)
         self.assertIn("height(54.dp)",home)
     def test_art_is_embedded_and_quote_uses_real_handwriting_font(self):
         quote=(ROOT/"scripts/ReferenceQuoteV36.kt").read_text("utf-8")
