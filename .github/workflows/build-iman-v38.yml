@@ -210,7 +210,7 @@ jobs:
           assert 'Crossfade(' in quotes
           assert 'Modifier.fillMaxWidth().height(58.dp)' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'Route.Book' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
-          assert 'Route.Bookmarks' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
+          assert 'Route.Notes' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'Бесплатный нейроголос RuVoice (установка)' not in reader
           from scripts.build_iman_v17 import ART
           for art_name in ART:
