@@ -96,7 +96,7 @@ internal fun ImanReadingStatistics(book: BookData, store: AppStore, openMore: ()
                                 if (value > 0f) {
                                     Box(Modifier.width(12.dp)
                                         .height((30.dp * (value / maxMinutes)).coerceAtLeast(2.dp))
-                                        .background(bronze, RoundedCornerShape(topStart = 3.dp, topEnd = 3.dp)))
+                                        .background(bronze, RoundedCornerShape(3.dp)))
                                 }
                             }
                             Text(dayNames[index], fontFamily = WebSansFont,
