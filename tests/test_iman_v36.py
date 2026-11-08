@@ -8,8 +8,9 @@ class StatisticsReferenceV36(unittest.TestCase):
         stats=(ROOT/"scripts/ReadingStatisticsV36.kt").read_text("utf-8")
         self.assertIn("ImanReadingStatistics(book, store",home)
         self.assertNotIn('Text("Темы для изучения"',home)
+        self.assertIn("navigate(Route.Progress)",home)
         self.assertNotIn('book.collections.take(2)',home)
-        for token in ("V38ReadingLedger(context)","ledger.daysAgo(","chapterReadFraction(","store.quizBestPercent","book.collections", "Canvas(", "Route.Progress"):
+        for token in ("V38ReadingLedger(context)","ledger.daysAgo(","chapterReadFraction(","store.quizBestPercent","book.collections", "Canvas("):
             self.assertIn(token, stats)
         self.assertNotIn("68%", stats)
         self.assertNotIn("72%", stats)
