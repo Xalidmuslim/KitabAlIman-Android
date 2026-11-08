@@ -1,4 +1,4 @@
-name: Build Kitab al-Iman v0.29.0
+name: Build Kitab al-Iman v0.30.0
 
 on:
   push:
@@ -24,6 +24,7 @@ on:
       - codex/iman-reference-art-v27-20261108
       - codex/iman-art-scale-v28-20261108
       - codex/iman-pixel-reference-v29-20261108
+      - codex/iman-reference-alignment-v30-20261108
   workflow_dispatch:
 
 permissions:
@@ -81,8 +82,8 @@ jobs:
       - name: Test book preservation, quotes and navigation
         run: python3 -m unittest discover -s tests -v
 
-      - name: Prepare native v0.29.0 application
-        run: python3 -m scripts.build_iman_v29 --dest AndroidApp
+      - name: Prepare native v0.30.0 application
+        run: python3 -m scripts.build_iman_v30 --dest AndroidApp
 
       - name: Check transformed source and data
         run: |
@@ -157,29 +158,29 @@ jobs:
           assert all(item in nav for item in (
               'NavItem("Главная"', 'NavItem("Оглавление"',
               'NavItem("Поиск"', 'NavItem("Закладки"', 'NavItem("Ещё"'))
-          home_v29 = (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
-          quote_v29 = (src/'ImanQuoteCarousel.kt').read_text(encoding='utf-8')
-          assert 'border = null' in home_v29 and 'shadowElevation = 0.dp' in home_v29
-          assert 'readerPaperOverlay(' not in home_v29
-          assert 'reader_parchment_source' not in home_v29
-          assert 'Column(modifier.fillMaxSize())' in home_v29
-          assert 'item(key = "library-four")' in home_v29
-          assert 'LinearProgressIndicator(' in home_v29
-          assert 'Brush.horizontalGradient' not in home_v29
-          assert 'border = null' in quote_v29 and 'shadowElevation = 0.dp' in quote_v29
-          assert 'R.drawable.iman_v28_reminder' in quote_v29
-          assert 'Modifier.weight(0.54f)' in quote_v29
-          assert 'Modifier.weight(0.46f)' in quote_v29
-          assert 'showIllustration' in quote_v29
-          assert 'R.drawable.iman_v17_quote' not in quote_v29
+          home_v30 = (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
+          quote_v30 = (src/'ImanQuoteCarousel.kt').read_text(encoding='utf-8')
+          assert 'border = null' in home_v30 and 'shadowElevation = 0.dp' in home_v30
+          assert 'readerPaperOverlay(' not in home_v30
+          assert 'reader_parchment_source' not in home_v30
+          assert 'Column(modifier.fillMaxSize())' in home_v30
+          assert 'item(key = "library-four")' in home_v30
+          assert 'LinearProgressIndicator(' in home_v30
+          assert 'Brush.horizontalGradient' not in home_v30
+          assert 'border = null' in quote_v30 and 'shadowElevation = 0.dp' in quote_v30
+          assert 'R.drawable.iman_v30_reminder' in quote_v30
+          assert 'height(120.dp)' in quote_v30
+          assert 'width(220.dp).height(142.dp)' in quote_v30
+          assert 'showIllustration' in quote_v30
+          assert 'R.drawable.iman_v17_quote' not in quote_v30
           assert 'R.drawable.iman_v29_unified_home' in app
           assert 'val seamlessHome = current == Route.Home' in app
           assert 'seamlessHome = seamlessHome' in app
           assert '.background(if (seamlessHome) Color.Transparent' in nav
           for name in ('contents','collections','glossary','bookmarks'):
-              assert 'R.drawable.iman_v28_' + name in home_v29
+              assert 'R.drawable.iman_v28_' + name in home_v30
               assert (root/'app/src/main/res/drawable-nodpi'/('iman_v28_' + name + '.webp')).stat().st_size > 3000
-          assert (root/'app/src/main/res/drawable-nodpi/iman_v28_reminder.webp').stat().st_size > 3000
+          assert (root/'app/src/main/res/drawable-nodpi/iman_v30_reminder.webp').stat().st_size > 3000
           assert (root/'app/src/main/res/drawable-nodpi/iman_v29_unified_home.webp').stat().st_size > 3000
           assert 'Route.More -> ImanV38MoreScreen(screenModifier, ::navigate)' in app
           assert 'ЛИЧНАЯ БИБЛИОТЕКА' in (src/'ImanV38More.kt').read_text(encoding='utf-8')
@@ -193,8 +194,8 @@ jobs:
           assert 'SepiaMiniStat(' not in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'R.drawable.iman_v28_contents' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'Route.Progress' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
-          assert 'book.collections.take(2)' in home_v29
-          assert 'heightIn(min = 148.dp)' in quote_v29
+          assert 'book.collections.take(2)' in home_v30
+          assert 'fillMaxWidth(0.66f)' in quote_v30
           assert 'ContentScale.FillBounds' not in quotes
           assert 'Crossfade(' in quotes
           assert 'Brush.horizontalGradient' not in quotes
@@ -207,10 +208,10 @@ jobs:
           assert len(quote_data)==79
           assert len(set(q['text'] for q in quote_data))==79
           assert len(set(q['chapterId'] for q in quote_data))>=50
-          assert 'heightIn(min = 106.dp)' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
+          assert 'heightIn(min = 96.dp)' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'EditorialResumeCard(' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'Crossfade(' in quotes
-          assert 'Modifier.fillMaxWidth().height(77.dp)' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
+          assert 'Modifier.fillMaxWidth().height(70.dp)' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'Route.Book' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'Route.Bookmarks' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'Бесплатный нейроголос RuVoice (установка)' not in reader
@@ -273,7 +274,7 @@ jobs:
       - name: Publish installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.29.0-Release-APK
+          name: KitabAlIman-v0.30.0-Release-APK
           path: AndroidApp/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 7
@@ -305,18 +306,18 @@ jobs:
             adb shell wm size 432x768
             adb shell wm density 160
             adb shell settings put system font_scale 1.0
-            adb shell am start -W -n com.xalid.kitabaliman.preview29/com.xalid.meditsinaproroka.nativeapp.MainActivity
+            adb shell am start -W -n com.xalid.kitabaliman.preview30/com.xalid.meditsinaproroka.nativeapp.MainActivity
             sleep 9
             mkdir -p qa
-            adb shell screencap -p /sdcard/iman_v29_home.png
-            adb pull /sdcard/iman_v29_home.png qa/iman_v29_home.png
+            adb shell screencap -p /sdcard/iman_v30_home.png
+            adb pull /sdcard/iman_v30_home.png qa/iman_v30_home.png
 
       - name: Upload actual-emulator Home screenshot
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.29.0-Visual-QA
-          path: qa/iman_v29_home.png
+          name: KitabAlIman-v0.30.0-Visual-QA
+          path: qa/iman_v30_home.png
           if-no-files-found: error
           retention-days: 7
 
@@ -326,9 +327,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          TAG=v0.29.0
+          TAG=v0.30.0
           APK=AndroidApp/app/build/outputs/apk/release/app-release.apk
           if ! gh release view "$TAG" >/dev/null 2>&1; then
-            gh release create "$TAG" --target "$GITHUB_SHA" --title "Книга Имана v0.29.0" --notes "Единый безрамочный фон главного экрана и навигации, шесть оригинальных реалистичных рисунков; содержимое книги сохранено."
+            gh release create "$TAG" --target "$GITHUB_SHA" --title "Книга Имана v0.30.0" --notes "Единый безрамочный фон главного экрана и навигации, шесть оригинальных реалистичных рисунков; содержимое книги сохранено."
           fi
-          gh release upload "$TAG" "$APK#KitabAlIman-v0.29.0.apk" --clobber
+          gh release upload "$TAG" "$APK#KitabAlIman-v0.30.0.apk" --clobber
