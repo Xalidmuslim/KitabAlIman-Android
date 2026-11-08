@@ -88,7 +88,7 @@ def build_v23(kit: Path, dest: Path):
     assets = dest / "app/src/main/assets"
     protected_java = {
         p.name: p.read_bytes() for p in java.glob("*.kt")
-        if p.name not in ("ModernEditorialHome.kt", "ImanQuoteCarousel.kt", "App.kt")
+        if p.name not in ("ModernEditorialHome.kt", "ImanQuoteCarousel.kt", "App.kt", "MedicineHomeArtwork.kt")
     }
     before_nav = (java / "App.kt").read_text("utf-8")
     book_hashes = {
@@ -137,6 +137,25 @@ def build_v23(kit: Path, dest: Path):
     (java / "App.kt").write_text(after_nav, "utf-8")
     install_icon_quartet(kit, res)
 
+    # Decode v23 book images via the established asynchronous preloader,
+    # keeping thumbnail raster decoding off the Compose UI thread.
+    preload_path = java / "MedicineHomeArtwork.kt"
+    preload_before = preload_path.read_text("utf-8")
+    preload_after = replace_one(
+        preload_before,
+        "        R.drawable.iman_v17_bookmarks,",
+        """        R.drawable.iman_v17_bookmarks,
+        R.drawable.iman_v23_contents,
+        R.drawable.iman_v23_collections,
+        R.drawable.iman_v23_glossary,
+        R.drawable.iman_v23_bookmarks,""",
+        "v23 new artwork preload",
+    )
+    preload_path.write_text(preload_after, "utf-8")
+
+    for name in ICON_NAMES:
+        if f"R.drawable.iman_v23_{name}" not in preload_path.read_text("utf-8"):
+            raise RuntimeError("v23: generated icon is not preloaded: " + name)
     for name, content in protected_java.items():
         if (java / name).read_bytes() != content:
             raise RuntimeError("v23: book reader, preferences or unrelated screen edited")
