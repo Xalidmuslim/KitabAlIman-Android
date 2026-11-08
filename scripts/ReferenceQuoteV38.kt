@@ -61,8 +61,7 @@ internal fun ImanFeaturedQuoteCarousel(navigate: (Route) -> Unit) {
                     // forcing a huge 174dp Row. A fixed-height Box gives the art
                     // independent width without letting it dictate vertical rhythm.
                     Box(
-                        modifier = Modifier.fillMaxWidth().heightIn(min = 92.dp)
-                            .clickable { navigate(Route.Reader(q.chapterId, q.blockId)) },
+                        modifier = Modifier.fillMaxWidth().heightIn(min = 92.dp),
                     ) {
                         Image(
                             painter = MedicineHomeArtwork.painter(R.drawable.iman_v36_reminder),
@@ -80,8 +79,7 @@ internal fun ImanFeaturedQuoteCarousel(navigate: (Route) -> Unit) {
                         }
                     }
                 } else {
-                    Box(Modifier.fillMaxWidth().heightIn(min = 92.dp)
-                        .clickable { navigate(Route.Reader(q.chapterId, q.blockId)) },
+                    Box(Modifier.fillMaxWidth().heightIn(min = 92.dp),
                         contentAlignment = Alignment.CenterStart) {
                         ImanQuoteAnimatedText(current, ink)
                     }
