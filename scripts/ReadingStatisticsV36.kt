@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -67,22 +68,22 @@ internal fun ImanReadingStatistics(book: BookData, store: AppStore, openMore: ()
     val mastery = if (tested == 0) 0f else strong.toFloat() / tested
     val average = if (tested == 0) null else results.average().roundToInt()
 
-    Column(Modifier.fillMaxWidth().padding(start = 2.dp, end = 2.dp, top = 5.dp)) {
+    Column(Modifier.fillMaxWidth().padding(start = 2.dp, end = 2.dp, top = 0.dp)) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text("Статистика чтения", fontFamily = WebLiterataFont,
                 fontWeight = FontWeight.Bold, fontSize = 20.sp, color = ink,
                 modifier = Modifier.weight(1f))
             Text("Подробнее", fontFamily = WebSansFont, fontSize = 10.5.sp,
                 color = bronze, modifier = Modifier.clickable(onClick = openMore)
-                    .padding(horizontal = 4.dp, vertical = 10.dp))
+                    .padding(horizontal = 4.dp, vertical = 2.dp))
         }
-        Spacer(Modifier.height(4.dp))
+        Spacer(Modifier.height(1.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(13.dp)) {
             Column(Modifier.weight(1f)) {
                 StatSectionTitle("По дням", ink)
                 Text("Минуты чтения", fontFamily = WebSansFont, fontSize = 10.sp, color = muted)
-                Spacer(Modifier.height(5.dp))
-                Canvas(Modifier.fillMaxWidth().height(65.dp)) {
+                Spacer(Modifier.height(2.dp))
+                Canvas(Modifier.fillMaxWidth().height(47.dp).clipToBounds()) {
                     val top = 7.dp.toPx()
                     val bottom = size.height - 7.dp.toPx()
                     val max = maxOf(1f, daily.maxOrNull() ?: 0f)
@@ -104,9 +105,7 @@ internal fun ImanReadingStatistics(book: BookData, store: AppStore, openMore: ()
                         Text(day, fontFamily = WebSansFont, fontSize = 8.sp, color = muted)
                     }
                 }
-                val sum = daily.sum().roundToInt()
-                Text("$sum мин за 7 дней", fontFamily = WebSansFont,
-                    fontSize = 9.sp, color = muted)
+                // The full seven-day total is available in the detailed progress screen.
             }
             Column(Modifier.weight(1f)) {
                 StatSectionTitle("По темам", ink)
@@ -129,7 +128,7 @@ internal fun ImanReadingStatistics(book: BookData, store: AppStore, openMore: ()
                 }
             }
         }
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(7.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(13.dp)) {
             Column(Modifier.weight(1f)) {
                 StatSectionTitle("Усвоение", ink)
@@ -137,7 +136,7 @@ internal fun ImanReadingStatistics(book: BookData, store: AppStore, openMore: ()
                     fontSize = 10.sp, color = muted)
                 Spacer(Modifier.height(6.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Box(Modifier.size(65.dp), contentAlignment = Alignment.Center) {
+                    Box(Modifier.size(57.dp), contentAlignment = Alignment.Center) {
                         Canvas(Modifier.fillMaxSize()) {
                             val width = 6.dp.toPx()
                             val inset = width / 2f
@@ -169,7 +168,7 @@ internal fun ImanReadingStatistics(book: BookData, store: AppStore, openMore: ()
                 StatSectionTitle("Викторины", ink)
                 Text("Проверка знаний", fontFamily = WebSansFont,
                     fontSize = 10.sp, color = muted)
-                Spacer(Modifier.height(11.dp))
+                Spacer(Modifier.height(6.dp))
                 Text("Проверено глав: $tested", fontFamily = WebSansFont,
                     fontSize = 11.sp, color = ink)
                 Spacer(Modifier.height(6.dp))
