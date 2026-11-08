@@ -1,0 +1,37 @@
+name: Import original Kitab al-Iman v0.27 artwork once
+
+on:
+  push:
+    branches:
+      - codex/iman-reference-art-v27-20261108
+    paths:
+      - scripts/iman_v27_import.py
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  transfer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install image dependencies
+        run: python -m pip install Pillow==12.3.0 numpy==2.2.6
+      - name: Download original generated images and create mobile-sized alpha resources
+        run: python -m scripts.iman_v27_import
+      - name: Commit all six WebP assets for reproducible offline builds
+        run: |
+          set -euo pipefail
+          test "$(find assets/ui/v27 -name 'iman_v27_*.webp' | wc -l)" -eq 6
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/ui/v27
+          git commit -m "assets: include six generated reference illustrations in repo [skip ci]"
+          git push origin HEAD:codex/iman-reference-art-v27-20261108
