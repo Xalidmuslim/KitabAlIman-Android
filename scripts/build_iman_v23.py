@@ -15,7 +15,7 @@ from scripts.build_iman_v22 import build_v22
 from scripts.build_iman_v20 import replace_one, APP, NAV, QUOTE as QUOTE_MARKER
 
 ICON_NAMES = ("contents", "collections", "glossary", "bookmarks")
-ATLAS_SHA256 = "f2f0a892bd2f9a938a1d068b793bd51e36a8781d9255f66ca86a14e640c07368"
+ATLAS_SHA256 = "496f4817ea569cb1739cc4950aa6aa6e851e8c30eaac439679657eb2123ad8cc"
 
 def install_variant4_quote(source: str, implementation: str) -> str:
     if source.count(QUOTE_MARKER) != 1:
@@ -60,11 +60,11 @@ def install_icon_quartet(kit: Path, target_res: Path):
         raise RuntimeError("v23: original matte illustration atlas checksum differs")
     image = Image.open(io.BytesIO(raw))
     image.load()
-    if image.format != "JPEG" or image.size != (384, 96):
+    if image.format != "JPEG" or image.size != (320, 80):
         raise RuntimeError("v23: unexpected icon atlas format/size")
     folder = target_res / "drawable-nodpi"
     for i, name in enumerate(ICON_NAMES):
-        cut = image.crop((i * 96, 0, (i + 1) * 96, 96)).convert("RGB")
+        cut = image.crop((i * 80, 0, (i + 1) * 80, 80)).convert("RGB")
         dst = folder / f"iman_v23_{name}.webp"
         cut.save(dst, "WEBP", quality=93, method=6)
         if dst.stat().st_size < 350:
