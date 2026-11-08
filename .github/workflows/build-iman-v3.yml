@@ -207,7 +207,7 @@ jobs:
           assert 'book.collections.take(2)' not in home_v30
           assert 'ImanReadingStatistics(book, store)' in home_v30
           assert 'height(54.dp)' in home_v30
-          assert 'height(47.dp).clipToBounds()' in (src/'ReadingStatisticsV36.kt').read_text(encoding='utf-8')
+          assert 'height(35.dp).clipToBounds()' in (src/'ReadingStatisticsV36.kt').read_text(encoding='utf-8')
           assert (src/'ReadingStatisticsV36.kt').is_file()
           assert 'fillMaxWidth(0.58f)' in quote_v30
           assert 'ContentScale.FillBounds' not in quotes
