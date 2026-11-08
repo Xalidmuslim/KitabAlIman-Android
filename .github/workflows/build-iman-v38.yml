@@ -55,6 +55,7 @@ jobs:
           if [ ! -s assets/ui/v29/iman_v29_unified_home.webp ]; then
             python3 -m scripts.iman_v29_generate_paper
             echo "Paper texture generated for this isolated build"
+          fi
 
       - name: Test book preservation, quotes and navigation
         run: python3 -m unittest discover -s tests -v
