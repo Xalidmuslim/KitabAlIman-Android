@@ -172,7 +172,7 @@ jobs:
           assert 'LinearProgressIndicator(' in home_v30
           assert 'Brush.horizontalGradient' not in home_v30
           assert 'border = null' in quote_v30 and 'shadowElevation = 0.dp' in quote_v30
-          assert 'R.drawable.iman_v32_reminder' in quote_v30
+          assert 'R.drawable.iman_v34_reminder' in quote_v30
           assert 'height(120.dp)' in quote_v30
           assert 'width(290.dp).height(183.dp)' in quote_v30
           assert 'showIllustration' in quote_v30
@@ -182,9 +182,9 @@ jobs:
           assert 'seamlessHome = seamlessHome' in app
           assert '.background(if (seamlessHome) Color.Transparent' in nav
           for name in ('contents','collections','glossary','bookmarks'):
-              assert 'R.drawable.iman_v32_' + name in home_v30
-              assert (root/'app/src/main/res/drawable-nodpi'/('iman_v32_' + name + '.webp')).stat().st_size > 3000
-          assert (root/'app/src/main/res/drawable-nodpi/iman_v32_reminder.webp').stat().st_size > 3000
+              assert 'R.drawable.iman_v34_' + name in home_v30
+              assert (root/'app/src/main/res/drawable-nodpi'/('iman_v34_' + name + '.webp')).stat().st_size > 3000
+          assert (root/'app/src/main/res/drawable-nodpi/iman_v34_reminder.webp').stat().st_size > 3000
           assert (root/'app/src/main/res/drawable-nodpi/iman_v29_unified_home.webp').stat().st_size > 3000
           assert 'Route.More -> ImanV38MoreScreen(screenModifier, ::navigate)' in app
           assert 'ЛИЧНАЯ БИБЛИОТЕКА' in (src/'ImanV38More.kt').read_text(encoding='utf-8')
@@ -196,7 +196,7 @@ jobs:
           assert 'maxLines = 5' in quotes
           assert 'ModernEditorialHomeScreen(book, store, modifier' in (src/'IbnQayyimStyle.kt').read_text(encoding='utf-8')
           assert 'SepiaMiniStat(' not in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
-          assert 'R.drawable.iman_v32_contents' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
+          assert 'R.drawable.iman_v34_contents' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'Route.Progress' in (src/'ModernEditorialHome.kt').read_text(encoding='utf-8')
           assert 'book.collections.take(2)' in home_v30
           assert 'fillMaxWidth(0.62f)' in quote_v30
