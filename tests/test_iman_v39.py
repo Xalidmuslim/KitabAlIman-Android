@@ -36,7 +36,7 @@ class ImanV39PresentationTests(unittest.TestCase):
 
     def test_build_keeps_book_and_navigation(self):
         b=(ROOT/"scripts/build_iman_v39.py").read_text("utf-8")
-        for token in ("build_v38(kit, dest)", "book_hashes", "reader_before", "NAV", "79",
+        for token in ("build_v38(kit,dest)", "book_hashes", "reader_before", "NAV", "79",
                       "preview39", "R.drawable.iman_v39_relief"):
             self.assertIn(token, b)
         home = (ROOT/"scripts/ReferenceHomeV39.kt").read_text("utf-8")
