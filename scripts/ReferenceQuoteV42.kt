@@ -54,7 +54,8 @@ internal fun ImanFeaturedQuoteCarousel(navigate: (Route) -> Unit) {
                             fontSize = 11.sp, color = accent)
                     }
                 }
-                // Fade the manuscript into the right edge of the background.\n                // Long quotes retain full width: the artwork becomes more subtle.
+                // Fade the manuscript into the right edge of the background.
+                // Long quotes retain full width: the artwork becomes more subtle.
                 Box(
                     modifier = Modifier.fillMaxWidth().heightIn(min = 111.dp),
                 ) {
