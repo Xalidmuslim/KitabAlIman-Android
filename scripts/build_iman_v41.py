@@ -79,7 +79,7 @@ def build_v41(kit: Path, dest: Path) -> None:
     stats = (kit / "scripts/ReadingStatisticsV41.kt").read_text("utf-8")
     if ('dayNames[index]' not in stats or 'Text("$minutes"' not in stats
             or 'height(22.dp)' not in stats
-            or 'screenHeightDp >= 740' not in stats
+            or 'screenHeightDp >= 820' not in stats
             or 'ledger.daysAgo(it)' not in stats):
         raise RuntimeError("v41 missing aligned real-time weekly reading minutes")
     (java / "ReadingStatisticsV36.kt").write_text(stats, "utf-8")

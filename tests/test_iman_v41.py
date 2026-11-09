@@ -21,8 +21,8 @@ class ImanV41Layout(unittest.TestCase):
     def test_flexible_spacing_keeps_small_screens_scrollable(self):
         s=(ROOT/"scripts/ReadingStatisticsV41.kt").read_text("utf-8")
         h=(ROOT/"scripts/ReferenceHomeV41.kt").read_text("utf-8")
-        self.assertIn('screenHeightDp >= 740',s)
-        self.assertIn('screenHeightDp >= 740',h)
+        self.assertIn('screenHeightDp >= 820',s)
+        self.assertIn('screenHeightDp >= 820',h)
         self.assertIn('LazyColumn(',h)
         self.assertIn('ImanReadingStatistics(book, store)',h)
         self.assertIn('Modifier.fillMaxSize().padding(bottom = 76.dp).clipToBounds()',h)

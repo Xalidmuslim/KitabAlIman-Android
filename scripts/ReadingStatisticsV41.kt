@@ -35,7 +35,7 @@ private val StatTrack = Color(0xFFD8C8B3)
 @Composable
 internal fun ImanReadingStatistics(book: BookData, store: AppStore, openMore: () -> Unit) {
     val context = LocalContext.current
-    val roomy = LocalConfiguration.current.screenHeightDp >= 740
+    val roomy = LocalConfiguration.current.screenHeightDp >= 820
     val ledger = remember(context) { V38ReadingLedger(context) }
     var revision by remember { mutableIntStateOf(0) }
     // The ledger persists to preferences; refresh when returning from the reader

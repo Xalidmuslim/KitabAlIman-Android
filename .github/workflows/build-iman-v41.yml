@@ -194,7 +194,7 @@ jobs:
           stats=(src/'ReadingStatisticsV36.kt').read_text(encoding='utf-8')
           assert 'height(22.dp)' in stats and 'height(32.dp)' not in stats
           assert 'Text("$minutes"' in stats and 'dayNames[index]' in stats
-          assert 'screenHeightDp >= 740' in stats and 'screenHeightDp >= 740' in home_v30
+          assert 'screenHeightDp >= 820' in stats and 'screenHeightDp >= 820' in home_v30
           assert 'R.drawable.iman_v41_engraving' in quote_v30
           assert (root/'app/src/main/res/drawable-nodpi/iman_v41_engraving.webp').stat().st_size > 1000
           assert '22.5.sp' in quote_v30 and '20.5.sp' in quote_v30

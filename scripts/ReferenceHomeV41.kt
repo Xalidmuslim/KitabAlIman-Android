@@ -221,7 +221,7 @@ internal fun ModernEditorialHomeScreen(
     })
     val percent = (fraction * 100f).roundToInt().coerceIn(0, 100)
     val dark = isEditorialDark()
-    val roomy = LocalConfiguration.current.screenHeightDp >= 740
+    val roomy = LocalConfiguration.current.screenHeightDp >= 820
     Column(modifier.fillMaxSize().padding(bottom = 76.dp).clipToBounds()) {
         // The single wallpaper is drawn underneath this transparent content and
         // the bottom navigation, in MedicinaApp (not individually in a card).
