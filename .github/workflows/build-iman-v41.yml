@@ -219,7 +219,7 @@ jobs:
           assert (root/'app/src/main/res/drawable-nodpi/iman_v38_notes.webp').stat().st_size > 1000
           assert (root/'app/src/main/res/drawable-nodpi/iman_v38_reminder.webp').stat().st_size > 1000
           assert (root/'app/src/main/res/drawable-nodpi/iman_v38_flat_paper.webp').stat().st_size > 3000
-          assert '"${minutes} м"' in (src/'ReadingStatisticsV36.kt').read_text(encoding='utf-8')
+          assert 'Text("$minutes"' in (src/'ReadingStatisticsV36.kt').read_text(encoding='utf-8')
           assert 'Arrangement.SpaceBetween' not in (src/'ReadingStatisticsV36.kt').read_text(encoding='utf-8')
 
           assert 'ImanCaveatFont' in quote_v30
@@ -385,7 +385,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: KitabAlIman-v0.41.0-Visual-QA
-          path: qa/iman_v40_*.png
+          path: qa/iman_v41_*.png
           if-no-files-found: error
           retention-days: 7
 
