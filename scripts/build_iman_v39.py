@@ -61,17 +61,22 @@ def create_matching_launcher(dest: Path) -> None:
     def fitting_image(size, fraction):
         fg=Image.new("RGBA",(size,size),(0,0,0,0))
         subject=art.copy()
-        subject.thumbnail((int(size*fraction),int(size*fraction)),
-                          Image.Resampling.LANCZOS)
+        # thumbnail() never upscales a smaller source asset. The 240px
+        # book remained tiny in the 320px header; resize proportionally.
+        max_extent=size*fraction
+        scale=min(max_extent/subject.width,max_extent/subject.height)
+        subject=subject.resize((max(1,round(subject.width*scale)),
+                                max(1,round(subject.height*scale))),
+                               Image.Resampling.LANCZOS)
         fg.alpha_composite(subject,((size-subject.width)//2,(size-subject.height)//2))
         return fg
 
     # Unframed image matching the visible Contents/Collections/Glossary drawings.
-    header=fitting_image(320,1.08)
+    header=fitting_image(320,.94)
     header.save(drawable/"iman_v39_header.webp","WEBP",quality=95,method=6)
 
     # Android's adaptive icon mask retains the book safely in its centre area.
-    foreground=fitting_image(512,.84)
+    foreground=fitting_image(512,.70)
     foreground.save(drawable/"iman_v39_launcher_foreground.webp",
                     "WEBP",quality=94,method=6)
 
