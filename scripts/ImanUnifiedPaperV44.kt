@@ -15,6 +15,8 @@ internal fun ImanUnifiedRouteTheme(isHome: Boolean, content: @Composable () -> U
     val dark = parent.background.red < 0.25f
     val scheme = parent.copy(
         primary = if (dark) parent.primary else Color(0xFF78614C),
+        primaryContainer = if (dark) parent.primaryContainer else Color(0xFFE9DDCB),
+        onPrimaryContainer = if (dark) parent.onPrimaryContainer else Color(0xFF352D27),
         onSurface = if (dark) parent.onSurface else Color(0xFF352D27),
         onSurfaceVariant = if (dark) parent.onSurfaceVariant else Color(0xFF81705E),
         surface = Color.Transparent,
