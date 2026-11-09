@@ -128,6 +128,9 @@ def patch_reader(s):
                 androidx.compose.foundation.shape.RoundedCornerShape(10.dp),
             ),"""
     s=one(s,old,",","flat hadith/verse/footnote presentation")
+    scripture='''.background(MaterialTheme.colorScheme.primary.copy(alpha = 0.065f),
+                            androidx.compose.foundation.shape.RoundedCornerShape(9.dp))'''
+    s=one(s,scripture,"","flatten cited-verse paragraph paper")
     s=s.replace("            .height(IntrinsicSize.Min)\n,",
                 "            .height(IntrinsicSize.Min),")
     s,n=flatten_material_containers(s)
@@ -153,6 +156,8 @@ private fun PaperBackgroundChoices(store: AppStore) {
 
 """
     s=s[:a]+note+s[b:]
+    # This legacy menu is not the main Route.More, but must not repaint the paper.
+    s=s.replace('Column(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {\\n        WebHeader("Ещё"', 'Column(modifier.fillMaxSize()) {\\n        WebHeader("Ещё"')
     s,n=flatten_material_containers(s)
     if n<7:raise RuntimeError("v44 settings container inventory shrank")
     return s
