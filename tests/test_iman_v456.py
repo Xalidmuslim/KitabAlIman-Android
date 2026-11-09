@@ -9,7 +9,7 @@ class GroundedReliefV456(unittest.TestCase):
     def test_ornament_has_legible_left_detail_without_dark_patch(self):
         from scripts.iman_v456_ground import make_ground
         a=np.asarray(make_ground().convert("RGBA"))[...,3]
-        self.assertEqual(a.shape,(496,684))
+        self.assertEqual(a.shape,(496,842))
         for side in (a[0],a[-1],a[:,0],a[:,-1]):
             self.assertEqual(int(np.max(side)),0)
         left=a[325:470,20:270]
