@@ -50,7 +50,7 @@ def make_ground():
     # Open-ended parallel bands; no opaque tile, border or card.
     for margin,alpha,thick in ((5,126,3.4),(12,94,2.4),(23,72,1.7)):
         stroke([(4+margin,8+margin),(sw-10-margin,8+margin)],alpha,thick)
-        stroke([(4+margin,sh-11-margin),(sw-10-margin,sh-11-margin)],alpha,thick)
+        stroke([(4+margin,sh-11-margin),(sw-10-margin,sh-11-margin)],round(alpha*.46),thick)
 
     # Fewer large ornamental medallions: remain legible at 103dp image height.
     # The earlier 55 tiny rosettes collapsed into speckled texture on Android.
@@ -65,14 +65,14 @@ def make_ground():
                 radius=30 if k%2==0 else 18
                 star.append((cx+math.cos(angle)*radius,
                              cy+math.sin(angle)*radius*.66))
-            stroke(star,130,2.6)
-            for radius,alpha,line in ((17,108,2.0),(7,87,1.7)):
+            stroke(star,146,2.6)
+            for radius,alpha,line in ((17,116,2.0),(7,94,1.7)):
                 polygon([(cx,cy-radius*.73),(cx+radius,cy),
                          (cx,cy+radius*.73),(cx-radius,cy)],alpha,line)
     # Two long woven bands, with wide gaps between distinctive rosettes.
     for margin,alpha in ((3,123),(9,80)):
         stroke([(15,15+margin),(sw-15,15+margin)],alpha,2.6)
-        stroke([(15,sh-15-margin),(sw-15,sh-15-margin)],alpha,2.5)
+        stroke([(15,sh-15-margin),(sw-15,sh-15-margin)],round(alpha*.48),2.5)
     for cx in (92,176,260,344):
         for cy in (65,80):
             stroke([(cx-25,cy),(cx,cy-9),(cx+25,cy)],78,2.2)
@@ -90,13 +90,20 @@ def make_ground():
     margin_x=np.minimum(xx,w-1-xx)
     margin_y=np.minimum(yy,h-1-yy)
     fade=_smooth(margin_x/68.0)*_smooth(margin_y/38.0)
+    # Dissolve along projected edges, not a hard horizontal rectangular line.
+    a,b,c,d,e,f,g,h_inv = _inverse_perspective(source,quad)
+    denom = g*xx+h_inv*yy+1.0
+    u = (a*xx+b*yy+c)/denom/(sw*f)
+    v = (d*xx+e*yy+f)/denom/(sh*f)
+    distance_to_edge = np.minimum.reduce([u,1.0-u,v,1.0-v])
+    fade *= _smooth(distance_to_edge/0.065)
     rgba[...,3]=np.uint8(np.clip(rgba[...,3].astype(float)*fade*.97,0,255))
     motif=Image.fromarray(rgba,"RGBA")
 
     # A small diffused contact shadow. No wide opaque oval is permitted.
     shade_mask=Image.new("L",(w,h),0)
-    ImageDraw.Draw(shade_mask).ellipse((330,385,645,446),fill=40)
-    shade_mask=shade_mask.filter(ImageFilter.GaussianBlur(30))
+    ImageDraw.Draw(shade_mask).ellipse((330,385,645,446),fill=63)
+    shade_mask=shade_mask.filter(ImageFilter.GaussianBlur(35))
     alpha=np.asarray(shade_mask).astype(float)*fade
     shadow=Image.new("RGBA",(w,h),INK+(0,))
     shadow.putalpha(Image.fromarray(np.uint8(alpha),"L"))
