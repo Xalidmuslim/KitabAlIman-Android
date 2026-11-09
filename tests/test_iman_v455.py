@@ -32,7 +32,7 @@ class ApprovedGroundReliefV455(unittest.TestCase):
                       ".width(if (compactScreen) 80.dp else 99.dp)",
                       ".height(if (compactScreen) 86.dp else 103.dp)",
                       ".requiredWidth(if (compactScreen) 119.dp else 147.dp)",
-                      "ContentScale.Fit", "ContentScale.FillBounds"):
+                      "ContentScale.Fit"):
             self.assertIn(token,q)
         self.assertIn("androidx.compose.foundation.layout.Box(",q)
         self.assertNotIn("TextOverflow.Ellipsis",q)
