@@ -144,6 +144,8 @@ def patch_web(s):
           'Column(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {\n        WebHeader("Настройки чтения", back = back)',
           'Column(modifier.fillMaxSize()) {\n        WebHeader("Настройки чтения", back = back)',
           "settings background")
+    s=s.replace('Светлая и тёмная тема общие для всех разделов «Пути сердца».',
+                'Единая тема во всех разделах «Книги Имана».')
     a=s.index('@Composable\nprivate fun PaperBackgroundChoices(store: AppStore) {')
     b=s.index('@Composable\nfun WebReaderSettingsSheet(',a)
     note="""@Composable
@@ -168,6 +170,10 @@ def patch_contents(s):
        "Column(modifier.fillMaxSize()) {",
        "toc paper background")
     s,n=flatten_material_containers(s)
+    s=one(s,
+       "color = if (active) {\n                                    if (dark) MaterialTheme.colorScheme.primary else SepiaAccent\n                                } else if (dark) MaterialTheme.colorScheme.surface else SepiaSurface",
+       f"color = {COLOR}",
+       "toc filters are flat, not filled chips")
     s=one(s,"color = if (active) Color.White else ink",
        "color = if (active) MaterialTheme.colorScheme.primary else ink",
        "toc selected filter contrast")
