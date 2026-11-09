@@ -25,7 +25,7 @@ class ImanV41Layout(unittest.TestCase):
         self.assertIn('screenHeightDp >= 820',h)
         self.assertIn('LazyColumn(',h)
         self.assertIn('ImanReadingStatistics(book, store)',h)
-        self.assertIn('Modifier.fillMaxSize().padding(bottom = 76.dp).clipToBounds()',h)
+        self.assertIn('Column(modifier.fillMaxSize().padding(bottom = 76.dp).clipToBounds())',h)
 
     def test_only_engraving_strokes_gain_strength_no_filled_fog(self):
         q=(ROOT/"scripts/ReferenceQuoteV41.kt").read_text("utf-8")
