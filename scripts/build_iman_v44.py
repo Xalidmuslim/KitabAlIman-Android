@@ -41,7 +41,7 @@ def build_v44(kit: Path, dest: Path) -> None:
     config=gradle.read_text("utf-8")
     for old,new in (
         ("versionCode 46","versionCode 48"),
-        ("versionName '0.44.0'","versionName '0.44.0'"),
+        ("versionName '0.43.1'","versionName '0.44.1'"),
         ("applicationIdSuffix '.preview43'","applicationIdSuffix '.preview44'"),
     ):
         config=replace_one(config,old,new,"v44 isolated installation")
