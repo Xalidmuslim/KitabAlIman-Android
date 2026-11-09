@@ -109,7 +109,7 @@ def build_v40(kit: Path, dest: Path) -> None:
 
     quote_file = java / "ImanQuoteCarousel.kt"
     original = quote_file.read_text("utf-8")
-    marker = "@Composable\\ninternal fun ImanFeaturedQuoteCarousel("
+    marker = "@Composable\ninternal fun ImanFeaturedQuoteCarousel("
     if original.count(marker) != 1 or original.count('FeaturedExcerpt("iman-chapter-') != 79:
         raise RuntimeError("v40 quote inventory/anchors changed")
     q = (kit / "scripts/ReferenceQuoteV40.kt").read_text("utf-8")
@@ -124,7 +124,7 @@ def build_v40(kit: Path, dest: Path) -> None:
     current = preload.read_text("utf-8")
     current = replace_one(current,
         "        R.drawable.iman_v39_relief,",
-        "        R.drawable.iman_v39_relief,\\n"
+        "        R.drawable.iman_v39_relief,\n"
         "        R.drawable.iman_v40_engraving,",
         "preload engraving off UI thread")
     preload.write_text(current, "utf-8")
