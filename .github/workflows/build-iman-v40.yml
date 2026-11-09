@@ -346,8 +346,8 @@ jobs:
             # Font identity and relief are also asserted on every rendering path above.
             for n in $(seq 1 8); do adb shell input tap 382 105; done
             sleep 2
-            adb shell screencap -p /sdcard/iman_v39_quote_long.png
-            adb pull /sdcard/iman_v39_quote_long.png qa/iman_v39_quote_long.png
+            adb shell screencap -p /sdcard/iman_v40_quote_long.png
+            adb pull /sdcard/iman_v40_quote_long.png qa/iman_v40_quote_long.png
 
             # Small display QA: longer Russian text with 10% larger system font.
             adb shell wm size 360x800
@@ -376,7 +376,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: KitabAlIman-v0.40.0-Visual-QA
-          path: qa/iman_v39_*.png
+          path: qa/iman_v40_*.png
           if-no-files-found: error
           retention-days: 7
 
@@ -389,6 +389,6 @@ jobs:
           TAG=v0.40.0
           APK=AndroidApp/app/build/outputs/apk/release/app-release.apk
           if ! gh release view "$TAG" >/dev/null 2>&1; then
-            gh release create "$TAG" --target "$GITHUB_SHA" --title "Книга Имана v0.40.0" --notes "Единый безрамочный фон главного экрана и навигации, шесть оригинальных реалистичных рисунков; содержимое книги сохранено."
+            gh release create "$TAG" --target "$GITHUB_SHA" --title "Книга Имана v0.40.0" --notes "Четвёртая плитка «Хадисы», более крупный рукописный текст и прозрачное тиснение без коричневого пятна. Тексты книги и пользовательские данные не изменены; отдельная preview-установка."
           fi
           gh release upload "$TAG" "$APK#KitabAlIman-v0.40.0.apk" --clobber
