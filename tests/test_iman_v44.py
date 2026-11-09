@@ -31,12 +31,13 @@ class UnifiedPaperContracts(unittest.TestCase):
         builder=(ROOT/"scripts/build_iman_v44.py").read_text("utf-8")
         for token in ("build_v43(kit, dest)","book_hashes",
                       "quiz.json","131","79","Route.Notes","Route.Hadiths",
-                      "preview44","NAV","Reader.kt","Screens.kt",
+                      "preview44","NAV","Reader.kt",
                       "ModernEditorialHome.kt","ImanQuoteCarousel.kt"):
             self.assertIn(token,builder)
         t=(ROOT/"scripts/iman_v44_transform.py").read_text("utf-8")
         self.assertIn("(if (chapter.title.length > 60) 18 else 20).sp",t)
         self.assertIn('WebHeader("Настройки чтения"',t)
+        self.assertIn('"Screens.kt"', (ROOT/"scripts/iman_v44_transform.py").read_text("utf-8"))
         self.assertIn("Content", (ROOT/"scripts/ReferenceHomeV41.kt").read_text("utf-8"))
 
 if __name__=="__main__":
