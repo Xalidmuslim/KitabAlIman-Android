@@ -41,9 +41,9 @@ class ApprovedGroundReliefV455(unittest.TestCase):
     def test_no_other_composable_changes(self):
         new=(ROOT/"scripts/ReferenceQuoteV455.kt").read_text("utf-8")
         old=(ROOT/"scripts/ReferenceQuoteV453.kt").read_text("utf-8")
-        start_old="                    Image(\\n                        painter = MedicineHomeArtwork.painter(R.drawable.iman_v43_approved_scroll),"
+        start_old="                    Image(\n                        painter = MedicineHomeArtwork.painter(R.drawable.iman_v43_approved_scroll),"
         start_new="                    // Background relief is transparent"
-        end="                }\\n                HorizontalDivider("
+        end="                }\n                HorizontalDivider("
         self.assertEqual(new.split(start_new)[0],old.split(start_old)[0])
         self.assertEqual(new.split(end)[1],old.split(end)[1])
         self.assertIn(end,new)
