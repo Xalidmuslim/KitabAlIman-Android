@@ -18,6 +18,20 @@ class GroundedReliefV456(unittest.TestCase):
         self.assertLess(float(middle.mean()),45.0)  # no dark brown translucent mat
         self.assertGreater(float(middle.std()),25.0) # discernible etched lines
 
+
+    def test_ornament_is_not_speckled_at_actual_phone_size(self):
+        from PIL import ImageFilter
+        from scripts.iman_v456_ground import make_ground
+        alpha=make_ground().convert("RGBA").resize(
+            (174,103),Image.Resampling.LANCZOS).getchannel("A")
+        blur=alpha.filter(ImageFilter.GaussianBlur(1.2))
+        fine=np.asarray(alpha,dtype=float)[65:100,10:170]
+        low=np.asarray(blur,dtype=float)[65:100,10:170]
+        self.assertLess(float(np.abs(fine-low).mean()),7.4,
+                        "too many tiny medallions render as speckled noise")
+        self.assertGreater(float(np.percentile(fine,95)),75,
+                           "ornament must remain visible at smartphone scale")
+
     def test_preserve_quote_wrap_and_approved_scroll(self):
         v455=(ROOT/"scripts/ReferenceQuoteV455.kt").read_text("utf-8")
         v456=(ROOT/"scripts/ReferenceQuoteV456.kt").read_text("utf-8")
