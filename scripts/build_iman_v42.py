@@ -57,7 +57,7 @@ def build_v42(kit: Path, dest: Path) -> None:
 
     quote_path = java / "ImanQuoteCarousel.kt"
     previous = quote_path.read_text("utf-8")
-    marker = "@Composable\\ninternal fun ImanFeaturedQuoteCarousel("
+    marker = "@Composable\ninternal fun ImanFeaturedQuoteCarousel("
     if previous.count(marker) != 1 or previous.count('FeaturedExcerpt("iman-chapter-') != 79:
         raise RuntimeError("v42 reminder inventory changed")
     snippet = (kit / "scripts/ReferenceQuoteV42.kt").read_text("utf-8")
@@ -72,7 +72,7 @@ def build_v42(kit: Path, dest: Path) -> None:
     before = preloader.read_text("utf-8")
     before = replace_one(
         before, "        R.drawable.iman_v41_engraving,",
-        "        R.drawable.iman_v41_engraving,\\n"
+        "        R.drawable.iman_v41_engraving,\n"
         "        R.drawable.iman_v42_manuscript_qalam,",
         "preload new illustration exactly once",
     )
