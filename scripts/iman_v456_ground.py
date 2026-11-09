@@ -52,28 +52,31 @@ def make_ground():
         stroke([(4+margin,8+margin),(sw-10-margin,8+margin)],alpha,thick)
         stroke([(4+margin,sh-11-margin),(sw-10-margin,sh-11-margin)],alpha,thick)
 
-    # Interlocked eight-point rosettes and small inlaid rhombi.
-    for row,cy in enumerate((26,53,80,107,132)):
-        for col in range(11):
-            cx=9+col*43+(row%2)*20
-            if not (16<cx<420):
+    # Fewer large ornamental medallions: remain legible at 103dp image height.
+    # The earlier 55 tiny rosettes collapsed into speckled texture on Android.
+    for row,cy in enumerate((39,106)):
+        for col in range(5):
+            cx=52+col*84+(row%2)*15
+            if cx>410:
                 continue
             star=[]
             for k in range(17):
-                a=math.pi*k/8
-                radius=16 if k%2==0 else 8.5
-                star.append((cx+math.cos(a)*radius,
-                             cy+math.sin(a)*radius*.71))
-            stroke(star,112,2.25)
-            for radius,alpha,line in ((8.4,88,1.8),(3.6,75,1.35)):
+                angle=math.pi*k/8
+                radius=30 if k%2==0 else 18
+                star.append((cx+math.cos(angle)*radius,
+                             cy+math.sin(angle)*radius*.66))
+            stroke(star,130,2.6)
+            for radius,alpha,line in ((17,108,2.0),(7,87,1.7)):
                 polygon([(cx,cy-radius*.73),(cx+radius,cy),
                          (cx,cy+radius*.73),(cx-radius,cy)],alpha,line)
-    # Thread-thin diagonal lattice between medallions.
-    for row in range(1,5):
-        y=row*27+11
-        stroke([(12,y),(sw-12,y)],52,1.3)
-        for cx in range(12,sw-12,43):
-            stroke([(cx,y-11),(cx+20,y+11)],56,1.3)
+    # Two long woven bands, with wide gaps between distinctive rosettes.
+    for margin,alpha in ((3,123),(9,80)):
+        stroke([(15,15+margin),(sw-15,15+margin)],alpha,2.6)
+        stroke([(15,sh-15-margin),(sw-15,sh-15-margin)],alpha,2.5)
+    for cx in (92,176,260,344):
+        for cy in (65,80):
+            stroke([(cx-25,cy),(cx,cy-9),(cx+25,cy)],78,2.2)
+            stroke([(cx-25,cy),(cx,cy+9),(cx+25,cy)],64,2.0)
 
     source=[(0,0),(sw*f,0),(sw*f,sh*f),(0,sh*f)]
     quad=[(50,370),(460,301),(673,410),(168,471)]
