@@ -44,14 +44,14 @@ jobs:
               --notes "Тестовая v0.42: рукопись и тростниковый калам интегрированы справа в фон напоминания, без отдельной рамки. Сохранены четыре раздела, 131 глава, 79 цитат и недельная статистика. Устанавливается отдельно; прогресс из других preview автоматически не переносится."
           fi
           gh release upload "$TAG" \
-            "apk/app-release.apk#KitabAlIman-v0.42.0.apk" \
+            "apk/app-release.apk" \
             -R "${GITHUB_REPOSITORY}" --clobber
           mkdir -p verified
           gh release download "$TAG" -R "${GITHUB_REPOSITORY}" \
-            -p KitabAlIman-v0.42.0.apk -D verified
-          echo "4ddc2bfd3c95e981513c2e8ab152c52a538a168ffa04c852516b708114b753a1  verified/KitabAlIman-v0.42.0.apk" | sha256sum -c -
+            -p app-release.apk -D verified
+          echo "4ddc2bfd3c95e981513c2e8ab152c52a538a168ffa04c852516b708114b753a1  verified/app-release.apk" | sha256sum -c -
           gh release view "$TAG" -R "${GITHUB_REPOSITORY}" --json assets \
-            --jq '.assets[] | select(.name == "KitabAlIman-v0.42.0.apk") | [.name,.size,.url] | @tsv'
+            --jq '.assets[] | select(.name == "app-release.apk") | [.name,.size,.url] | @tsv'
 
   visual_qa:
     needs: publish
