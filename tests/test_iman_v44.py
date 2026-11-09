@@ -36,6 +36,8 @@ class UnifiedPaperContracts(unittest.TestCase):
             self.assertIn(token,builder)
         t=(ROOT/"scripts/iman_v44_transform.py").read_text("utf-8")
         self.assertIn("(if (chapter.title.length > 60) 18 else 20).sp",t)
+        self.assertIn("reserve bottom navigation height on every non-home screen",t)
+        self.assertIn("padding(bottom = 72.dp)",t)
         self.assertIn('WebHeader("Настройки чтения"',t)
         self.assertIn('"Screens.kt"', (ROOT/"scripts/iman_v44_transform.py").read_text("utf-8"))
         self.assertIn("Content", (ROOT/"scripts/ReferenceHomeV41.kt").read_text("utf-8"))

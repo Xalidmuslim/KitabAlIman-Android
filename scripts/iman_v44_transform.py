@@ -97,6 +97,16 @@ def patch_app(s):
         "                }\n                }\n            }\n        }\n            StandaloneBottomNav(",
         "non-home theme ending")
     s=one(s,
+        '''val screenModifier = if (route == Route.Home || route is Route.Reader)
+                Modifier.fillMaxSize()
+            else Modifier.fillMaxSize().statusBarsPadding()''',
+        '''val screenModifier = when (route) {
+                Route.Home -> Modifier.fillMaxSize()
+                is Route.Reader -> Modifier.fillMaxSize().padding(bottom = 72.dp)
+                else -> Modifier.fillMaxSize().statusBarsPadding().padding(bottom = 72.dp)
+            }''',
+        "reserve bottom navigation height on every non-home screen")
+    s=one(s,
         "seamlessHome = seamlessHome,\n                modifier = Modifier.align(Alignment.BottomCenter),",
         "seamlessHome = seamlessHome || current != Route.Home,\n                modifier = Modifier.align(Alignment.BottomCenter),",
         "shared bottom navbar")
@@ -105,6 +115,7 @@ def patch_app(s):
 def patch_screens(s):
     s,n=flatten_material_containers(s)
     if n<12: raise RuntimeError("v44 insufficient inner screen containers inspected")
+    s=s.replace("bottom = 110.dp", "bottom = 24.dp").replace("bottom = 112.dp", "bottom = 24.dp")
     start=s.index("fun SearchScreen(");end=s.index("fun BookmarksScreen(",start)
     area=s[start:end]
     area=one(area,"        OutlinedTextField(\n            value = query,",
@@ -119,6 +130,7 @@ def patch_reader(s):
     a=s.index("        if (MaterialTheme.colorScheme.background.red >= 0.25f) {\n            // Keep the original antique paper asset unchanged.")
     b=s.index("        // The page, status-bar area",a)
     s=s[:a]+"        // App.kt paints the same shared parchment behind the Reader.\n"+s[b:]
+    s=one(s,"bottom = 112.dp", "bottom = 24.dp", "reader scroll inset")
     s=one(s,"(if (chapter.title.length > 60) 21 else 24).sp",
         "(if (chapter.title.length > 60) 18 else 20).sp","reader chapter headings")
     s=one(s,"(if (chapter.title.length > 60) 26 else 29).sp",
@@ -161,6 +173,7 @@ private fun PaperBackgroundChoices(store: AppStore) {
     # This legacy menu is not the main Route.More, but must not repaint the paper.
     s=s.replace('Column(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {\\n        WebHeader("Ещё"', 'Column(modifier.fillMaxSize()) {\\n        WebHeader("Ещё"')
     s,n=flatten_material_containers(s)
+    s=s.replace("bottom = 110.dp", "bottom = 24.dp")
     if n<7:raise RuntimeError("v44 settings container inventory shrank")
     return s
 
@@ -174,6 +187,7 @@ def patch_contents(s):
        "color = if (active) {\n                                    if (dark) MaterialTheme.colorScheme.primary else SepiaAccent\n                                } else if (dark) MaterialTheme.colorScheme.surface else SepiaSurface",
        f"color = {COLOR}",
        "toc filters are flat, not filled chips")
+    s=one(s,"bottom = 114.dp", "bottom = 24.dp", "contents scroll inset")
     s=one(s,"color = if (active) Color.White else ink",
        "color = if (active) MaterialTheme.colorScheme.primary else ink",
        "toc selected filter contrast")
@@ -183,6 +197,8 @@ def patch_statistics(s):
     s=one(s,"Column(modifier.fillMaxSize().background(paper)) {",
        "Column(modifier.fillMaxSize()) {","statistics opaque background")
     s,n=flatten_material_containers(s)
+    s=s.replace("PaddingValues(16.dp, 9.dp, 16.dp, 118.dp)", "PaddingValues(16.dp, 9.dp, 16.dp, 24.dp)")
+    s=s.replace("PaddingValues(16.dp, 8.dp, 16.dp, 120.dp)", "PaddingValues(16.dp, 8.dp, 16.dp, 24.dp)")
     return s
 
 PATCHES={
@@ -192,7 +208,7 @@ PATCHES={
     "WebDesign.kt":patch_web,
     "IbnQayyimStyle.kt":patch_contents,
     "IbnV38StudyEngine.kt":patch_statistics,
-    "FaithStudy.kt":lambda s:flatten_material_containers(s)[0],
+    "FaithStudy.kt":lambda s:flatten_material_containers(s)[0].replace("bottom = 112.dp", "bottom = 24.dp"),
 }
 
 def patch_all(java: Path):

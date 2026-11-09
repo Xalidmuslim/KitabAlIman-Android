@@ -52,7 +52,7 @@ internal fun ImanV38MoreScreen(modifier: Modifier, navigate: (Route) -> Unit) {
         }
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 5.dp, bottom = 110.dp),
+            contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 5.dp, bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             groups.forEachIndexed { groupIndex, (title, entries) ->
