@@ -88,7 +88,7 @@ internal fun ImanFeaturedQuoteCarousel(navigate: (Route) -> Unit) {
                                 .align(Alignment.TopEnd)
                                 .requiredWidth(if (compactScreen) 119.dp else 147.dp)
                                 .height(if (compactScreen) 86.dp else 103.dp),
-                            contentScale = ContentScale.FillBounds,
+                            contentScale = ContentScale.Fit,
                             alpha = 1f,
                             colorFilter = if (isDark)
                                 androidx.compose.ui.graphics.ColorFilter.tint(
