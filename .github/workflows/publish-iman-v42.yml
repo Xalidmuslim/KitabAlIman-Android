@@ -1,0 +1,115 @@
+name: Publish verified Kitab al-Iman v0.42.0 APK and screen QA
+
+on:
+  push:
+    branches:
+      - codex/iman-manuscript-qalam-v42-20261109
+    paths:
+      - .github/workflows/publish-iman-v42.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Recover verified APK from successful build steps (no rebuild)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p apk
+          gh run download 42602534342 -R "${GITHUB_REPOSITORY}" \
+            -n KitabAlIman-v0.42.0-Release-APK -D apk
+          test -s apk/app-release.apk
+          echo "4ddc2bfd3c95e981513c2e8ab152c52a538a168ffa04c852516b708114b753a1  apk/app-release.apk" | sha256sum -c -
+          unzip -t apk/app-release.apk >/dev/null
+          unzip -Z1 apk/app-release.apk | grep -Fxq 'AndroidManifest.xml'
+          unzip -Z1 apk/app-release.apk | grep -Fxq 'assets/book.json'
+          unzip -Z1 apk/app-release.apk | grep -Fxq 'assets/quiz.json'
+      - name: Publish APK direct-download GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG=v0.42.0
+          if ! gh release view "$TAG" -R "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            gh release create "$TAG" -R "${GITHUB_REPOSITORY}" \
+              --target d0beb3f3399c2f916a7cf47cca90c92c318d48f9 \
+              --title "Книга Имана v0.42.0" \
+              --notes "Тестовая v0.42: рукопись и тростниковый калам интегрированы справа в фон напоминания, без отдельной рамки. Сохранены четыре раздела, 131 глава, 79 цитат и недельная статистика. Устанавливается отдельно; прогресс из других preview автоматически не переносится."
+          fi
+          gh release upload "$TAG" \
+            "apk/app-release.apk#KitabAlIman-v0.42.0.apk" \
+            -R "${GITHUB_REPOSITORY}" --clobber
+          mkdir -p verified
+          gh release download "$TAG" -R "${GITHUB_REPOSITORY}" \
+            -p KitabAlIman-v0.42.0.apk -D verified
+          echo "4ddc2bfd3c95e981513c2e8ab152c52a538a168ffa04c852516b708114b753a1  verified/KitabAlIman-v0.42.0.apk" | sha256sum -c -
+          gh release view "$TAG" -R "${GITHUB_REPOSITORY}" --json assets \
+            --jq '.assets[] | select(.name == "KitabAlIman-v0.42.0.apk") | [.name,.size,.url] | @tsv'
+
+  visual_qa:
+    needs: publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Download same verified APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p apk
+          gh run download 42602534342 -R "${GITHUB_REPOSITORY}" \
+            -n KitabAlIman-v0.42.0-Release-APK -D apk
+          echo "4ddc2bfd3c95e981513c2e8ab152c52a538a168ffa04c852516b708114b753a1  apk/app-release.apk" | sha256sum -c -
+      - name: Enable KVM
+        run: |
+          if [ -e /dev/kvm ]; then
+            echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+            sudo udevadm control --reload-rules
+            sudo udevadm trigger --name-match=kvm
+          fi
+      - name: Screenshot the real APK on Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          target: google_apis
+          arch: x86_64
+          profile: pixel_2
+          ram-size: 2048M
+          emulator-boot-timeout: 600
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: |
+            set -euo pipefail
+            adb install apk/app-release.apk
+            adb shell wm size 432x768
+            adb shell wm density 160
+            adb shell settings put system font_scale 1.0
+            adb shell am start -W -n com.xalid.kitabaliman.preview42/com.xalid.meditsinaproroka.nativeapp.MainActivity
+            sleep 6
+            mkdir -p qa
+            adb shell screencap -p /sdcard/iman_v42_home.png
+            adb pull /sdcard/iman_v42_home.png qa/iman_v42_home.png
+            for n in $(seq 1 8); do adb shell input tap 382 105; done
+            sleep 2
+            adb shell screencap -p /sdcard/iman_v42_quote_long.png
+            adb pull /sdcard/iman_v42_quote_long.png qa/iman_v42_quote_long.png
+            adb shell wm size 360x800
+            adb shell wm density 160
+            adb shell settings put system font_scale 1.10
+            sleep 2
+            adb shell screencap -p /sdcard/iman_v42_home_small.png
+            adb pull /sdcard/iman_v42_home_small.png qa/iman_v42_home_small.png
+      - name: Upload v42 screenshots with matching path
+        uses: actions/upload-artifact@v4
+        with:
+          name: KitabAlIman-v0.42.0-Visual-QA
+          path: qa/iman_v42_*.png
+          if-no-files-found: error
+          retention-days: 7
