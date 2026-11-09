@@ -32,6 +32,13 @@ class GroundedReliefV456(unittest.TestCase):
         self.assertGreater(float(np.percentile(fine,95)),75,
                            "ornament must remain visible at smartphone scale")
 
+    def test_perspective_ornament_dissolves_without_internal_hard_border(self):
+        from scripts.iman_v456_ground import make_ground
+        alpha=np.asarray(make_ground().getchannel("A"),dtype=float)
+        lower=np.abs(np.diff(alpha,axis=0))[340:475,110:730]
+        self.assertLess(float(np.percentile(lower,95)),40.0,
+                        "perspective ornament still has a visible straight lower boundary")
+
     def test_preserve_quote_wrap_and_approved_scroll(self):
         v455=(ROOT/"scripts/ReferenceQuoteV455.kt").read_text("utf-8")
         v456=(ROOT/"scripts/ReferenceQuoteV456.kt").read_text("utf-8")
