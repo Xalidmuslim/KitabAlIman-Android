@@ -19,26 +19,28 @@ def digest(path: Path) -> str:
 
 
 def create_embossed_reminder(drawable: Path) -> None:
-    """Make a lightly raised parchment impression from the existing book artwork."""
-    with Image.open(drawable/"iman_v38_reminder.webp") as source:
+    """Prepare crisp aged-paper bas relief; mask the painted halo out entirely."""
+    # Use the sharper approved graphic instead of v38's twice-faded derivative.
+    with Image.open(drawable/"iman_v35_reminder.webp") as source:
         art=source.convert("RGBA")
     gray=ImageOps.grayscale(art)
-    h=np.asarray(gray,dtype=np.float32)
-    raised=np.asarray(gray.filter(ImageFilter.EMBOSS),dtype=np.float32)-128.
-    # Pre-baked directional relief, no RenderEffect/blur while scrolling.
-    micro=(h-np.asarray(gray.filter(ImageFilter.GaussianBlur(3)),dtype=np.float32))
-    shade=np.clip(raised*0.22+micro*0.16,-34.,34.)
+    light=np.asarray(gray,dtype=np.float32)
+    relief=np.asarray(gray.filter(ImageFilter.EMBOSS),dtype=np.float32)-128.
+    highpass=light-np.asarray(gray.filter(ImageFilter.GaussianBlur(2)),dtype=np.float32)
+    shade=np.clip(relief*.33+highpass*.14,-40.,40.)
+    depth=np.clip((240.-light)/125.,0.,1.)
     pigment=np.zeros((art.height,art.width,4),dtype=np.uint8)
-    for channel,base in enumerate((191,160,126)):
-        pigment[:,:,channel]=np.uint8(np.clip(base+shade*(1.0-channel*0.12),0,255))
-    # Existing organic cutout keeps edges transparent; add a soft left fade so
-    # the engraving grows out of the paper instead of looking like a picture.
-    alpha=np.asarray(art.getchannel("A"),dtype=np.float32)
+    for channel,base in enumerate((186,156,125)):
+        pigment[:,:,channel]=np.uint8(np.clip(base+shade*(1.0-channel*.09),0,255))
+    # Ink's light areas become transparent; preserve paper-engraved contours.
+    original=np.asarray(art.getchannel("A"),dtype=np.float32)
     x=np.arange(art.width,dtype=np.float32)[None,:]
-    fade=np.clip((x-art.width*.10)/max(1.,art.width*.27),0.,1.)
-    pigment[:,:,3]=np.uint8(np.clip(alpha*fade*.92,0,255))
+    fade_left=np.clip((x-art.width*.035)/max(1.,art.width*.30),0.,1.)
+    fade_right=np.clip((art.width-x)/max(1.,art.width*.055),0.,1.)
+    engraved=np.clip(original*(.05+.95*depth**.72)*fade_left*fade_right,0.,255)
+    pigment[:,:,3]=np.uint8(engraved)
     out=Image.fromarray(pigment,"RGBA")
-    out.save(drawable/"iman_v39_relief.webp","WEBP",quality=92,method=6)
+    out.save(drawable/"iman_v39_relief.webp","WEBP",quality=95,method=6)
     if (drawable/"iman_v39_relief.webp").stat().st_size < 1000:
         raise RuntimeError("Embossed reminder artwork unexpectedly small")
 
@@ -51,7 +53,7 @@ def create_matching_launcher(dest: Path) -> None:
     with Image.open(original) as source:
         art=source.convert("RGBA")
     alpha=art.getchannel("A")
-    bbox=alpha.point(lambda a:255 if a>15 else 0).getbbox()
+    bbox=alpha.point(lambda a:255 if a>135 else 0).getbbox()
     if bbox is None:
         raise RuntimeError("Approved library book is invisible")
     art=art.crop(bbox)
@@ -65,11 +67,11 @@ def create_matching_launcher(dest: Path) -> None:
         return fg
 
     # Unframed image matching the visible Contents/Collections/Glossary drawings.
-    header=fitting_image(320,.96)
+    header=fitting_image(320,1.08)
     header.save(drawable/"iman_v39_header.webp","WEBP",quality=95,method=6)
 
     # Android's adaptive icon mask retains the book safely in its centre area.
-    foreground=fitting_image(512,.64)
+    foreground=fitting_image(512,.84)
     foreground.save(drawable/"iman_v39_launcher_foreground.webp",
                     "WEBP",quality=94,method=6)
 
@@ -134,8 +136,8 @@ def build_v39(kit: Path, dest: Path) -> None:
     gradle=dest/"app/build.gradle"
     g=gradle.read_text("utf-8")
     for old,new in (
-        ("versionCode 39","versionCode 40"),
-        ("versionName '0.38.0'","versionName '0.39.0'"),
+        ("versionCode 39","versionCode 41"),
+        ("versionName '0.38.0'","versionName '0.39.1'"),
         ("applicationIdSuffix '.preview38'","applicationIdSuffix '.preview39'"),
     ):
         g=replace_one(g,old,new,"v39 isolated icon and quote preview")
@@ -186,7 +188,7 @@ def build_v39(kit: Path, dest: Path) -> None:
         raise RuntimeError("v39 lost a source quote")
     if "@mipmap/iman_v39_launcher" not in (dest/"app/src/main/AndroidManifest.xml").read_text("utf-8"):
         raise RuntimeError("v39 system app icon not installed")
-    print("PASS v39: 79 stable handwriting+permanent relief, matching header and launcher; reading/state preserved")
+    print("PASS v39.1: 79 stable handwriting+permanent relief, matching header and launcher; reading/state preserved")
 
 
 if __name__=="__main__":

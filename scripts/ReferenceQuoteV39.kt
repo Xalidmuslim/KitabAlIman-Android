@@ -66,7 +66,7 @@ internal fun ImanFeaturedQuoteCarousel(navigate: (Route) -> Unit) {
                             .width(228.dp).height(116.dp)
                             .offset(x = 16.dp, y = 4.dp),
                         contentScale = ContentScale.Fit,
-                        alpha = if (q.text.length > 125) 0.35f else 0.82f,
+                        alpha = if (q.text.length > 125) 0.67f else 0.88f,
                         colorFilter = if (isDark)
                             androidx.compose.ui.graphics.ColorFilter.tint(
                                 Color(0xFFD6BCA0),
@@ -74,7 +74,7 @@ internal fun ImanFeaturedQuoteCarousel(navigate: (Route) -> Unit) {
                             ) else null,
                     )
                     Column(
-                        Modifier.fillMaxWidth(if (q.text.length <= 125) 0.70f else 1f)
+                        Modifier.fillMaxWidth(if (q.text.length <= 125) 0.70f else 0.86f)
                             .align(Alignment.TopStart)
                             .padding(top = 7.dp, bottom = 9.dp),
                     ) {

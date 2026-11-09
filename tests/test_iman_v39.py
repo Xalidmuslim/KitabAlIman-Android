@@ -32,6 +32,7 @@ class ImanV39PresentationTests(unittest.TestCase):
         self.assertIn("android:icon", b)
         self.assertIn("android:roundIcon", b)
         self.assertIn("mipmap-anydpi-v26", b)
+        self.assertIn("bbox=alpha.point(lambda a:255 if a>135", b)
         self.assertIn("iman_v39_launcher", b)
 
     def test_build_keeps_book_and_navigation(self):

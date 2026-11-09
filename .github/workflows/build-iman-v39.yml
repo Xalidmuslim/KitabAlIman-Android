@@ -1,4 +1,4 @@
-name: Build Kitab al-Iman v0.39.0 stable quotes and launcher
+name: Build Kitab al-Iman v0.39.1 stable quotes and launcher
 
 on:
   push:
@@ -64,7 +64,7 @@ jobs:
       - name: Test v39 permanent reminder and Android launcher contracts
         run: python3 -m unittest discover -s tests -p 'test_iman_v39.py' -v
 
-      - name: Prepare native v0.39.0 application
+      - name: Prepare native v0.39.1 application
         run: python3 -m scripts.build_iman_v39 --dest AndroidApp
 
       - name: Check transformed source and data
@@ -285,7 +285,7 @@ jobs:
       - name: Publish installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.39.0-Release-APK
+          name: KitabAlIman-v0.39.1-Release-APK
           path: AndroidApp/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 7
@@ -341,11 +341,25 @@ jobs:
             adb shell screencap -p /sdcard/iman_v39_home_small.png
             adb pull /sdcard/iman_v39_home_small.png qa/iman_v39_home_small.png
 
+      - name: Export generated icon and parchment relief for visual review
+        if: always()
+        run: |
+          mkdir -p qa
+          python3 - <<'PY'
+          from PIL import Image
+          from pathlib import Path
+          root=Path('AndroidApp/app/src/main/res/drawable-nodpi')
+          for name in ('iman_v39_header','iman_v39_relief'):
+              source=root/(name+'.webp')
+              if source.is_file():
+                  Image.open(source).save(Path('qa')/(name+'_asset.png'))
+          PY
+
       - name: Upload actual-emulator Home screenshot
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.39.0-Visual-QA
+          name: KitabAlIman-v0.39.1-Visual-QA
           path: qa/iman_v39_*.png
           if-no-files-found: error
           retention-days: 7
@@ -356,9 +370,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          TAG=v0.39.0
+          TAG=v0.39.1
           APK=AndroidApp/app/build/outputs/apk/release/app-release.apk
           if ! gh release view "$TAG" >/dev/null 2>&1; then
-            gh release create "$TAG" --target "$GITHUB_SHA" --title "Книга Имана v0.39.0" --notes "Единый безрамочный фон главного экрана и навигации, шесть оригинальных реалистичных рисунков; содержимое книги сохранено."
+            gh release create "$TAG" --target "$GITHUB_SHA" --title "Книга Имана v0.39.1" --notes "Единый безрамочный фон главного экрана и навигации, шесть оригинальных реалистичных рисунков; содержимое книги сохранено."
           fi
-          gh release upload "$TAG" "$APK#KitabAlIman-v0.39.0.apk" --clobber
+          gh release upload "$TAG" "$APK#KitabAlIman-v0.39.1.apk" --clobber
