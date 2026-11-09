@@ -11,6 +11,7 @@ internal fun ImanFeaturedQuoteCarousel(navigate: (Route) -> Unit) {
     }
     var current by remember { mutableIntStateOf(first) }
     val q = imanExcerpts[current]
+    val compactScreen = androidx.compose.ui.platform.LocalConfiguration.current.screenWidthDp <= 380
     val isDark = MaterialTheme.colorScheme.background.red < 0.25f
     val ink = if (isDark) MaterialTheme.colorScheme.onSurface else Color(0xFF382D24)
     val muted = if (isDark) MaterialTheme.colorScheme.onSurfaceVariant else Color(0xFF83705B)
@@ -58,14 +59,15 @@ internal fun ImanFeaturedQuoteCarousel(navigate: (Route) -> Unit) {
                 // Fade the manuscript into the right edge of the background.
                 // Long quotes retain full width: the artwork becomes more subtle.
                 Box(
-                    modifier = Modifier.fillMaxWidth().heightIn(min = 133.dp),
+                    modifier = Modifier.fillMaxWidth().heightIn(min = if (compactScreen) 111.dp else 133.dp),
                 ) {
                     Image(
                         painter = MedicineHomeArtwork.painter(R.drawable.iman_v43_approved_scroll),
                         contentDescription = null,
                         modifier = Modifier.align(Alignment.BottomEnd)
-                            .width(148.dp).height(137.dp)
-                            .offset(x = 9.dp, y = (-3).dp),
+                            .width(if (compactScreen) 112.dp else 148.dp)
+                            .height(if (compactScreen) 103.dp else 137.dp)
+                            .offset(x = if (compactScreen) 12.dp else 9.dp, y = (-3).dp),
                         contentScale = ContentScale.Fit,
                         alpha = if (q.text.length > 125) 0.27f else 0.68f,
                         colorFilter = if (isDark)

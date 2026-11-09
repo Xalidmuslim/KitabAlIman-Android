@@ -1,4 +1,4 @@
-name: Build Kitab al-Iman v0.43.0 approved compact scroll
+name: Build Kitab al-Iman v0.43.1 approved compact scroll
 
 on:
   push:
@@ -76,7 +76,7 @@ jobs:
       - name: Targeted v43 approved-art and continuity regression tests
         run: python3 -m unittest discover -s tests -p 'test_iman_v43.py' -v
 
-      - name: Prepare native v0.43.0 application
+      - name: Prepare native v0.43.1 application
         run: python3 -m scripts.build_iman_v43 --dest AndroidApp
 
       - name: Check transformed source and data
@@ -173,6 +173,7 @@ jobs:
               assert 0.83 < im.height/im.width < 1.12
               assert im.getpixel((0,0))[3] == 0
           assert 'ContentScale.Fit' in quote_v30
+          assert 'LocalConfiguration.current.screenWidthDp <= 380' in quote_v30
 
           assert 'R.drawable.iman_v41_engraving' not in quote_v30
           from PIL import Image
@@ -182,8 +183,8 @@ jobs:
               assert m.getpixel((0,0))[3] == 0
               assert m.getchannel('A').getextrema()[1] > 90
 
-          assert 'heightIn(min = 133.dp)' in quote_v30
-          assert 'width(148.dp).height(137.dp)' in quote_v30
+          assert 'heightIn(min = if (compactScreen) 111.dp else 133.dp)' in quote_v30
+          assert 'width(if (compactScreen) 112.dp else 148.dp)' in quote_v30
           assert 'showIllustration' not in quote_v30
           assert 'R.drawable.iman_v17_quote' not in quote_v30
           assert 'R.drawable.iman_v38_flat_paper' in app
@@ -334,7 +335,7 @@ jobs:
       - name: Publish installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.43.0-Release-APK
+          name: KitabAlIman-v0.43.1-Release-APK
           path: AndroidApp/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 7
@@ -408,7 +409,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.43.0-Visual-QA
+          name: KitabAlIman-v0.43.1-Visual-QA
           path: qa/iman_v43_*.png
           if-no-files-found: error
           retention-days: 7
@@ -419,9 +420,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          TAG=v0.43.0
+          TAG=v0.43.1
           APK=AndroidApp/app/build/outputs/apk/release/app-release.apk
           if ! gh release view "$TAG" >/dev/null 2>&1; then
-            gh release create "$TAG" --target "$GITHUB_SHA" --title "Книга Имана v0.43.0" --notes "Утверждённая компактная иллюстрация: старинный свиток, чернильница и перо у правого края. Сохранены исходные пропорции, прозрачность, все 131 глава, 79 напоминаний и статистика. Отдельная установка preview43."
+            gh release create "$TAG" --target "$GITHUB_SHA" --title "Книга Имана v0.43.1" --notes "Утверждённая компактная иллюстрация: старинный свиток, чернильница и перо у правого края. Сохранены исходные пропорции, прозрачность, все 131 глава, 79 напоминаний и статистика. Отдельная установка preview43."
           fi
-          gh release upload "$TAG" "$APK#KitabAlIman-v0.43.0.apk" --clobber
+          gh release upload "$TAG" "$APK#KitabAlIman-v0.43.1.apk" --clobber

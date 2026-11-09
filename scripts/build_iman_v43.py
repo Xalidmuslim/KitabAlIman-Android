@@ -34,8 +34,8 @@ def build_v43(kit: Path, dest: Path) -> None:
     gradle = dest / "app/build.gradle"
     conf = gradle.read_text("utf-8")
     for old, new in (
-        ("versionCode 44", "versionCode 45"),
-        ("versionName '0.42.0'", "versionName '0.43.0'"),
+        ("versionCode 44", "versionCode 46"),
+        ("versionName '0.42.0'", "versionName '0.43.1'"),
         ("applicationIdSuffix '.preview42'", "applicationIdSuffix '.preview43'"),
     ):
         conf = replace_one(conf, old, new, "v43 separate preview")
@@ -66,7 +66,8 @@ def build_v43(kit: Path, dest: Path) -> None:
         or "R.drawable.iman_v42_manuscript_qalam" in quote
         or "ImanQuoteAnimatedText(current, ink)" not in quote
         or "fontFamily = ImanCaveatFont" not in quote
-        or ".width(148.dp).height(137.dp)" not in quote
+        or ".width(if (compactScreen) 112.dp else 148.dp)" not in quote
+        or ".height(if (compactScreen) 103.dp else 137.dp)" not in quote
         or "ContentScale.Fit" not in quote
     ):
         raise RuntimeError("v43 quote lost approved source or aspect-safe layout")
