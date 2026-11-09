@@ -103,7 +103,9 @@ def make_ground():
     ground=Image.alpha_composite(motif,shadow)
     # Match the Image view's actual 174:103 aspect ratio to avoid invisible
     # horizontal Fit padding and keep the motif under the approved scroll.
-    return ground.resize((OUTPUT_W,h),Image.Resampling.LANCZOS)
+    # Smooth only subpixel ornament aliasing at Android size; preserve the
+    # dominant medallion strokes, contrast and transparent image edges.
+    return ground.resize((OUTPUT_W,h),Image.Resampling.LANCZOS).filter(ImageFilter.GaussianBlur(1.2))
 
 
 def verify_ground(image):
