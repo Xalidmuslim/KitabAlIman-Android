@@ -91,10 +91,10 @@ def make_ground():
     margin_y=np.minimum(yy,h-1-yy)
     fade=_smooth(margin_x/68.0)*_smooth(margin_y/38.0)
     # Dissolve along projected edges, not a hard horizontal rectangular line.
-    a,b,c,d,e,f,g,h_inv = _inverse_perspective(source,quad)
+    a,b,c,d,e,coef_f,g,h_inv = _inverse_perspective(source,quad)
     denom = g*xx+h_inv*yy+1.0
     u = (a*xx+b*yy+c)/denom/(sw*f)
-    v = (d*xx+e*yy+f)/denom/(sh*f)
+    v = (d*xx+e*yy+coef_f)/denom/(sh*f)
     distance_to_edge = np.minimum.reduce([u,1.0-u,v,1.0-v])
     fade *= _smooth(distance_to_edge/0.065)
     rgba[...,3]=np.uint8(np.clip(rgba[...,3].astype(float)*fade*.97,0,255))
