@@ -25,7 +25,7 @@ def build_v453(kit: Path, dest: Path) -> None:
     drawable = dest / "app/src/main/res/drawable-nodpi"
     quote_file = java / "ImanQuoteCarousel.kt"
     gradle = dest / "app/build.gradle"
-    marker = "@Composable\\ninternal fun ImanFeaturedQuoteCarousel("
+    marker = "@Composable\ninternal fun ImanFeaturedQuoteCarousel("
     original_quote = quote_file.read_text("utf-8")
     if original_quote.count(marker) != 1 or original_quote.count('FeaturedExcerpt("iman-chapter-') != 79:
         raise RuntimeError("v453 quote structure or source count changed")
