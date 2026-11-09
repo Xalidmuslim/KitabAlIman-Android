@@ -1,0 +1,44 @@
+name: Publish verified Kitab al-Iman v0.39.1 APK
+
+on:
+  push:
+    branches:
+      - codex/iman-stable-quote-embossed-icon-v39-20261109
+    paths:
+      - .github/workflows/publish-iman-v391.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Download already validated Release APK (no rebuild)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir artifact
+          gh run download 42565249227 -R "${GITHUB_REPOSITORY}" -n KitabAlIman-v0.39.1-Release-APK -D artifact
+          test -s artifact/app-release.apk
+          echo "f4a051433e05fc09e552e79084eec70313527574281685dd1b64c0f0b35cc2f5  artifact/app-release.apk" | sha256sum -c -
+      - name: Publish permanent direct-download release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG=v0.39.1
+          if ! gh release view "$TAG" -R "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            gh release create "$TAG" -R "${GITHUB_REPOSITORY}" \
+              --target 7c9eac13657a40771513ce8f0b649416439b603b \
+              --title "Книга Имана v0.39.1" \
+              --notes "Проверенная тестовая версия: постоянная рельефная иллюстрация напоминаний, единый рукописный шрифт, обновлённая иконка. Устанавливается отдельно; прогресс из других preview не переносится."
+          fi
+          gh release upload "$TAG" "artifact/app-release.apk#KitabAlIman-v0.39.1.apk" \
+            -R "${GITHUB_REPOSITORY}" --clobber
+          gh release view "$TAG" -R "${GITHUB_REPOSITORY}" \
+            --json assets --jq '.assets[] | select(.name == "KitabAlIman-v0.39.1.apk") | [.name, .size, .url] | @tsv'
