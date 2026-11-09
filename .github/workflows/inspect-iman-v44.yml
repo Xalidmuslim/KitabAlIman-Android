@@ -1,0 +1,43 @@
+name: Inspect v44 all Native Compose screens
+on:
+  push:
+    branches: [codex/iman-unified-paper-v44-20261109]
+    paths: [.github/workflows/inspect-iman-v44.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/unpack_v4.py
+      - run: python3 scripts/unpack_v6.py
+      - name: Install artwork dependencies
+        run: python3 -m pip install --disable-pip-version-check Pillow==12.3.0 numpy==2.2.6 fonttools==4.60.1 brotli
+      - name: Construct exactly current Native v43.1 source without changing the app
+        run: python3 -m scripts.build_iman_v43 --dest AndroidApp
+      - name: Record implementation inventory
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path("AndroidApp/app/src/main/java/com/xalid/meditsinaproroka/nativeapp")
+          out=[]
+          for f in sorted(p.glob("*.kt")):
+              text=f.read_text("utf-8")
+              hits=[(i+1,l.strip()[:130]) for i,l in enumerate(text.splitlines())
+                    if any(t in l for t in ("fun ", "Route.", "R.drawable.iman_v38_flat_paper",
+                                          "Surface(", "Card(", "ElevatedCard(", ".border(", "PageHeader("))]
+              out.append(f"### {f.name} ({len(text)} characters)\n"+ "\n".join(f"{n}: {v}" for n,v in hits[:190]))
+          Path("SCREEN_INVENTORY.md").write_text("\n\n".join(out),"utf-8")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Iman-v44-Actual-Compose-Sources
+          path: |
+            SCREEN_INVENTORY.md
+            AndroidApp/app/src/main/java/com/xalid/meditsinaproroka/nativeapp/*.kt
+            AndroidApp/app/src/main/res/drawable-nodpi/iman_v38_flat_paper.webp
+            AndroidApp/app/build.gradle
+          retention-days: 3
