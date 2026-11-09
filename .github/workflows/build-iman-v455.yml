@@ -459,7 +459,7 @@ jobs:
           from PIL import Image
           from pathlib import Path
           root=Path('AndroidApp/app/src/main/res/drawable-nodpi')
-          for name in ('iman_v39_header','iman_v43_approved_scroll'):
+          for name in ('iman_v39_header','iman_v43_approved_scroll','iman_v455_ground_rug'):
               source=root/(name+'.webp')
               if source.is_file():
                   Image.open(source).save(Path('qa')/(name+'_asset.png'))
@@ -476,7 +476,6 @@ jobs:
 
       - name: Publish direct-download GitHub Release
         if: false  # Only publish after manual visual QA approves real screenshot vs reference
-        if: success()
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
