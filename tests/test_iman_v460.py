@@ -37,7 +37,7 @@ class ApprovedLauncherIconV460(unittest.TestCase):
                 self.assertEqual(b.size, (512,512))
                 self.assertIn(a.mode, ("RGB", "RGBA"))  # Opaque WebP may drop unused alpha
                 self.assertEqual(b.mode, "RGB")
-                self.assertGreaterEqual(a.getpixel((256,256))[3], 254)
+                self.assertGreaterEqual(a.convert("RGBA").getpixel((256,256))[3], 254)
 
     def test_version_keeps_book_and_manifest_route_safety(self):
         builder = (ROOT/"scripts/build_iman_v460.py").read_text("utf-8")
