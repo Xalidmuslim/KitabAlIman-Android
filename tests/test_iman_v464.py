@@ -65,18 +65,14 @@ class SoftBookArtworkV464(unittest.TestCase):
 
     def test_patch_modifies_only_home_brand_and_quote_layout(self):
         from scripts.build_iman_v464 import patch_home, patch_quote
+        from scripts.build_iman_v463 import patch_quote as v463_patch_quote
         with tempfile.TemporaryDirectory() as tmp:
             h=Path(tmp)/"ModernEditorialHome.kt"
             q=Path(tmp)/"ImanQuoteCarousel.kt"
             h.write_text((ROOT/"scripts/ReferenceHomeV39.kt").read_text("utf-8").replace(
                 "R.drawable.iman_v39_header","R.drawable.iman_v463_header"),"utf-8")
-            q.write_text((ROOT/"scripts/ReferenceQuoteV459.kt").read_text("utf-8").replace(
-                "R.drawable.iman_v459_integrated_manuscript","R.drawable.iman_v463_reminder_depth").replace(
-                ".width(if (compactScreen) 80.dp else 99.dp)"," .width(if (compactScreen) 112.dp else 128.dp)").replace(
-                ".height(if (compactScreen) 86.dp else 103.dp)"," .height(if (compactScreen) 100.dp else 110.dp)").replace(
-                ".requiredWidth(if (compactScreen) 132.dp else 170.dp)\n"
-                "                                .height(if (compactScreen) 86.dp else 103.dp)",
-                ".fillMaxSize()"),"utf-8")
+            q.write_text((ROOT/"scripts/ReferenceQuoteV459.kt").read_text("utf-8"),"utf-8")
+            v463_patch_quote(q)
             patch_home(h)
             patch_quote(q)
             home=h.read_text("utf-8");quote=q.read_text("utf-8")
