@@ -220,7 +220,7 @@ jobs:
               assert m.getpixel((0,0))[3] == 0
               assert m.getchannel('A').getextrema()[1] > 90
 
-          assert 'heightIn(min = if (compactScreen) 111.dp else 133.dp)' in quote_v30
+          assert 'heightIn(min = if (compactScreen) 108.dp else 117.dp)' in quote_v30
           assert 'width(if (compactScreen) 112.dp else 128.dp)' in quote_v30
           assert 'height(if (compactScreen) 100.dp else 110.dp)' in quote_v30
           assert 'showIllustration' not in quote_v30
