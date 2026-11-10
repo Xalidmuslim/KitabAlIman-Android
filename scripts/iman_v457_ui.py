@@ -28,12 +28,12 @@ def remove_medical_notice(source: str) -> str:
 
 def flatten_controls(source: str) -> str:
     """Keep onClick/enabled/semantics and remove decorative outlined surfaces."""
-    source = re.sub(r'(?<![\\w.])(OutlinedButton|FilledTonalButton|Button)\\s*\\(',
+    source = re.sub(r'(?<![\w.])(OutlinedButton|FilledTonalButton|Button)\s*\(',
                     'TextButton(', source)
     # Chips are not buttons: retain their label/click function and suppress
     # borders through their supported Material3 border argument.
     for match in reversed(list(re.finditer(
-            r'(?<![\\w.])(SuggestionChip|AssistChip|FilterChip|InputChip)\\s*\\(', source))):
+            r'(?<![\w.])(SuggestionChip|AssistChip|FilterChip|InputChip)\s*\(', source))):
         start = source.index('(', match.start())
         end = matching(source, start)
         args = split_args(source[start + 1:end])
@@ -45,7 +45,7 @@ def flatten_controls(source: str) -> str:
     return source
 
 
-PURPLE_COLOR = re.compile(r'Color\\(0xFF([0-9a-fA-F]{6})\\)')
+PURPLE_COLOR = re.compile(r'Color\(0xFF([0-9a-fA-F]{6})\)')
 
 
 def warm_purple_literals(source: str) -> str:
