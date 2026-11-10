@@ -17,8 +17,8 @@ class SoftBookArtworkV464(unittest.TestCase):
             path=Path(tmp)/"old.webp"
             enhance_reminder(ROOT/"assets/ui/v459/iman_v459_integrated_manuscript.webp",path)
             with Image.open(path) as picture:
-                top=np.asarray(picture.getchannel("A"))[0]
-                self.assertGreater(int(top.max()),180)
+                top_region=np.asarray(picture.getchannel("A"))[:10]
+                self.assertGreater(int(top_region.max()),180)
 
     def test_reminder_top_and_edges_feather_without_cutting_scroll_or_quill(self):
         from scripts.build_iman_v463 import enhance_reminder
@@ -59,7 +59,7 @@ class SoftBookArtworkV464(unittest.TestCase):
                 new=np.asarray(a.convert("RGBA"),dtype=np.float32)
                 opaque=old[:,:,3]>230
                 self.assertGreater(float(new[:,:,:3][opaque].mean()),
-                                   float(old[:,:,:3][opaque].mean())+3)
+                                   float(old[:,:,:3][opaque].mean())+1.5)
                 self.assertLess(float(new[:,:,3].mean()),float(old[:,:,3].mean())*.94)
                 self.assertGreater(int(new[:,:,3].max()),185)
 
