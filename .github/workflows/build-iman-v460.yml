@@ -412,8 +412,7 @@ jobs:
             adb shell cmd overlay enable com.android.internal.systemui.navbar.gestural || true
             adb shell settings put secure navigation_mode 2 || true
             # Launch the REAL APK by its current application id (not stale preview456).
-            PKG=com.xalid.kitabaliman.preview460
-            adb shell monkey -p "$PKG" -c android.intent.category.LAUNCHER 1
+            adb shell monkey -p com.xalid.kitabaliman.preview460 -c android.intent.category.LAUNCHER 1
             sleep 7
             adb shell dumpsys window windows | grep "mCurrentFocus"
             adb shell dumpsys window windows | grep -q "mCurrentFocus=.*$PKG" || {
