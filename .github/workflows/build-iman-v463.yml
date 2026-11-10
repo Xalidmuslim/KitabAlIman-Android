@@ -23,6 +23,11 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      - name: Python 3.11 for prebuilt image-processing wheels
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
       - name: Gradle 8.11.1
         uses: gradle/actions/setup-gradle@v4
         with:
