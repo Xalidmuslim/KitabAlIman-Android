@@ -61,7 +61,7 @@ class SeamlessManuscriptV459(unittest.TestCase):
         self.assertIn("com.xalid.kitabaliman.preview459", yaml)
         self.assertNotIn("adb shell am start -W -n com.xalid.kitabaliman.preview456", yaml)
         self.assertIn("mCurrentFocus", yaml)
-        self.assertIn("monkey -p", yaml)
+        self.assertIn('adb shell am start -W -n "$PKG/com.xalid.meditsinaproroka.nativeapp.MainActivity"', yaml)
         self.assertIn("test_iman_v459.py", yaml)
 
 
