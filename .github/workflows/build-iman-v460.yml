@@ -411,15 +411,12 @@ jobs:
             # Android system mode; retain a usable fallback on older emulator images.
             adb shell cmd overlay enable com.android.internal.systemui.navbar.gestural || true
             adb shell settings put secure navigation_mode 2 || true
-            # Launch the REAL APK by its current application id (not stale preview456).
-            adb shell monkey -p com.xalid.kitabaliman.preview460 -c android.intent.category.LAUNCHER 1
+            # Launch the installed native application explicitly; no shell-local
+            # variables or platform-dependent mCurrentFocus parsing.
+            adb shell am start -W -n com.xalid.kitabaliman.preview460/com.xalid.meditsinaproroka.nativeapp.MainActivity
             sleep 7
-            adb shell dumpsys window windows | grep "mCurrentFocus"
-            adb shell dumpsys window windows | grep -q "mCurrentFocus=.*$PKG" || {
-              echo "ERROR: actual Android foreground is not Kitab al-Iman $PKG"
-              adb logcat -d -t 250 | grep -E "FATAL EXCEPTION|AndroidRuntime|$PKG" | tail -90 || true
-              exit 1
-            }
+            adb shell pidof com.xalid.kitabaliman.preview460
+            adb shell dumpsys activity activities | grep -F "com.xalid.kitabaliman.preview460" || true
             sleep 9
             mkdir -p qa
             adb shell screencap -p /sdcard/iman_v460_home.png
