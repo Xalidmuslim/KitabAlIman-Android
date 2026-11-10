@@ -419,10 +419,10 @@ jobs:
             adb shell settings put secure navigation_mode 2 || true
             # Launch the installed native application explicitly; no shell-local
             # variables or platform-dependent mCurrentFocus parsing.
-            adb shell am start -W -n com.xalid.kitabaliman.preview461/com.xalid.meditsinaproroka.nativeapp.MainActivity
+            adb shell am start -W -n com.xalid.kitabaliman.preview462/com.xalid.meditsinaproroka.nativeapp.MainActivity
             sleep 7
-            adb shell pidof com.xalid.kitabaliman.preview461
-            adb shell dumpsys activity activities | grep -F "com.xalid.kitabaliman.preview461" || true
+            adb shell pidof com.xalid.kitabaliman.preview462
+            adb shell dumpsys activity activities | grep -F "com.xalid.kitabaliman.preview462" || true
             sleep 9
             mkdir -p qa
             adb shell screencap -p /sdcard/iman_v462_home.png
