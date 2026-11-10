@@ -3,7 +3,7 @@ name: Build Kitab al-Iman v0.46.3 borderless Home icon and fitted reminder
 on:
   push:
     branches:
-      - codex/iman-user-icon-textonly-more-v463-20261110
+      - codex/iman-seamless-icons-reminder-v463-20261110
   workflow_dispatch:
 
 permissions:
@@ -266,7 +266,7 @@ jobs:
           assert 'height(22.dp)' in stats and 'height(32.dp)' not in stats
           assert 'Text("$minutes"' in stats and 'dayNames[index]' in stats
           assert 'screenHeightDp >= 820' in stats and 'screenHeightDp >= 820' in home_v30
-          assert 'R.drawable.iman_v459_integrated_manuscript' in quote_v30
+          assert 'R.drawable.iman_v463_reminder_depth' in quote_v30
           assert (root/'app/src/main/res/drawable-nodpi/iman_v41_engraving.webp').stat().st_size > 1000
           assert '22.5.sp' in quote_v30 and '20.5.sp' in quote_v30
           assert '19.sp' in quote_v30 and '17.5.sp' in quote_v30
@@ -276,12 +276,12 @@ jobs:
           assert 'R.drawable.medicine_launcher_book' not in home_v30
           assert 'fontFamily = ImanCaveatFont' in quote_v30
           assert 'fontFamily = if (length' not in quote_v30
-          assert 'R.drawable.iman_v459_integrated_manuscript' in quote_v30
+          assert 'R.drawable.iman_v463_reminder_depth' in quote_v30
           assert 'if (showIllustration)' not in quote_v30
           assert (root/'app/src/main/res/drawable-nodpi/iman_v39_relief.webp').stat().st_size > 1000
           assert (root/'app/src/main/res/drawable-nodpi/iman_v463_header.webp').stat().st_size > 1000
           assert (root/'app/src/main/res/drawable-nodpi/iman_v463_reminder_depth.webp').stat().st_size > 1000
-          assert 'R.drawable.iman_v463_brand_icon' not in (src/'ImanV38More.kt').read_text(encoding='utf-8')
+          assert 'R.drawable.iman_v463_header' not in (src/'ImanV38More.kt').read_text(encoding='utf-8')
           assert 'Icon(Icons.Default.Settings,' in (src/'ImanV38More.kt').read_text(encoding='utf-8')
           assert 'Text(entry.icon,' in (src/'ImanV38More.kt').read_text(encoding='utf-8')
           assert (root/'app/src/main/res/mipmap-anydpi-v26/iman_v39_launcher.xml').is_file()
