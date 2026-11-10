@@ -192,14 +192,14 @@ jobs:
               assert im.getpixel((0,0))[3] == 0
           assert 'ContentScale.Fit' in quote_v30
           assert 'R.drawable.iman_v455_ground_rug' not in quote_v30
-          assert '.requiredWidth(if (compactScreen) 132.dp else 170.dp)' in quote_v30
+          assert '.requiredWidth(if (compactScreen) 132.dp else 170.dp)' not in quote_v30
           assert (root/'app/src/main/res/drawable-nodpi/iman_v459_integrated_manuscript.webp').is_file()
           from hashlib import sha256
           assert sha256((root/'app/src/main/res/drawable-nodpi/iman_v459_integrated_manuscript.webp').read_bytes()).hexdigest() == 'f9c796e981e63a5f47891c1e2cadcead8f44f98cb6c436689af464f8ac465233'
-          assert 'height(if (compactScreen) 86.dp else 103.dp)' in quote_v30
+          assert 'height(if (compactScreen) 100.dp else 110.dp)' in quote_v30
           assert 'alpha = 1f' in quote_v30
-          assert 'width(if (compactScreen) 80.dp else 99.dp)' in quote_v30
-          assert 'height(if (compactScreen) 86.dp else 103.dp)' in quote_v30
+          assert 'width(if (compactScreen) 112.dp else 128.dp)' in quote_v30
+          assert 'height(if (compactScreen) 100.dp else 110.dp)' in quote_v30
           assert 'alpha = 1f' in quote_v30
           assert 'ImanQuoteAnimatedText(current, ink, compactScreen)' in quote_v30
           assert 'LocalConfiguration.current.screenWidthDp <= 380' in quote_v30
@@ -213,8 +213,8 @@ jobs:
               assert m.getchannel('A').getextrema()[1] > 90
 
           assert 'heightIn(min = if (compactScreen) 111.dp else 133.dp)' in quote_v30
-          assert 'width(if (compactScreen) 80.dp else 99.dp)' in quote_v30
-          assert 'height(if (compactScreen) 86.dp else 103.dp)' in quote_v30
+          assert 'width(if (compactScreen) 112.dp else 128.dp)' in quote_v30
+          assert 'height(if (compactScreen) 100.dp else 110.dp)' in quote_v30
           assert 'showIllustration' not in quote_v30
           assert 'R.drawable.iman_v17_quote' not in quote_v30
           assert 'R.drawable.iman_v38_flat_paper' in app
