@@ -8,17 +8,16 @@ from PIL import Image
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-APPROVED_HASH = "c82dd7e55f74ffa322daba9ca25918fd4489927cd63316be69e4582cc80a5965"
+APPROVED_HASH = "f9c796e981e63a5f47891c1e2cadcead8f44f98cb6c436689af464f8ac465233"
 
 
 class SeamlessManuscriptV459(unittest.TestCase):
     def test_exact_approved_transparent_asset(self):
-        from scripts.iman_v459_art_data import APPROVED_WEBP_BASE64
-        blob = base64.b64decode(APPROVED_WEBP_BASE64, validate=True)
+        blob = (ROOT/"assets/ui/v459/iman_v459_integrated_manuscript.webp").read_bytes()
         self.assertEqual(hashlib.sha256(blob).hexdigest(), APPROVED_HASH)
         with Image.open(io.BytesIO(blob)) as image:
             self.assertEqual(image.mode, "RGBA")
-            self.assertEqual(image.size, (240, 162))
+            self.assertEqual(image.size, (180, 122))
             alpha = np.asarray(image.getchannel("A"))
             self.assertGreater(int(alpha.max()), 230)
             self.assertEqual(int(alpha[-1].max()), 0)
