@@ -9,7 +9,7 @@ class BorderlessUIV457(unittest.TestCase):
     def test_about_discards_only_unrelated_medical_notice(self):
         source = '''Column {
             Text("Здесь сохранён полный текст издания с исходным порядком глав и дополнительной тематической навигацией.")
-            Card {
+            Card(colors = CardDefaults.cardColors()) {
                 Column {
                     Text("Важное примечание")
                     Text("Это историко-религиозный текст, а не современное медицинское руководство.")
