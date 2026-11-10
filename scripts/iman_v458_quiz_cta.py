@@ -16,6 +16,8 @@ REQUIRED_IMPORTS = (
     "androidx.compose.foundation.layout.Row",
     "androidx.compose.foundation.layout.Spacer",
     "androidx.compose.foundation.layout.width",
+    "androidx.compose.foundation.layout.fillMaxWidth",
+    "androidx.compose.foundation.layout.size",
     "androidx.compose.material.icons.Icons",
     "androidx.compose.material.icons.filled.CheckCircle",
     "androidx.compose.material.icons.filled.ChevronRight",
