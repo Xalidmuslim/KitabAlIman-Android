@@ -91,7 +91,7 @@ jobs:
       - name: Verify seamless Home/launcher, unclipped reminder and unchanged More icons
         run: python3 -m unittest discover -s tests -p 'test_iman_v463.py' -v
 
-      - name: Regression test: icon mask, alpha, contrast and bounded reminder
+      - name: Regression test for icon mask, alpha, contrast and bounded reminder
         run: python3 -m unittest discover -s tests -p 'test_iman_v463.py' -v
 
       - name: Prepare native v0.46.3 application
