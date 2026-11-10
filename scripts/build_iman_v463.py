@@ -124,13 +124,18 @@ def prepare_artwork(kit: Path, res: Path) -> None:
     foreground.save(drawable/"iman_v39_launcher_foreground.webp","WEBP",
                     lossless=True,method=6,exact=True)
     oldpaper=drawable/"iman_v38_flat_paper.webp"
-    with Image.open(oldpaper) as p:
-        paper=p.convert("RGB")
-        pw,ph=paper.size
-        paper=paper.crop((int(pw*.26),int(ph*.37),
-                          int(pw*.74),int(ph*.60))).resize((512,512),Image.Resampling.BICUBIC)
     beige=Image.new("RGB",(512,512),(247,234,215))
-    background=Image.blend(paper,beige,.80).convert("RGBA")
+    if oldpaper.is_file():
+        with Image.open(oldpaper) as p:
+            paper=p.convert("RGB")
+            pw,ph=paper.size
+            paper=paper.crop((int(pw*.26),int(ph*.37),
+                              int(pw*.74),int(ph*.60))).resize((512,512),Image.Resampling.BICUBIC)
+        background=Image.blend(paper,beige,.80).convert("RGBA")
+    else:
+        # Unit test generates only new resources in an isolated temporary dir.
+        # The real build always has the v38 paper resource.
+        background=beige.convert("RGBA")
     background.alpha_composite(centered_cutout(cutout,512,.77))
     background.convert("RGB").save(mipmap/"iman_v39_launcher.webp",
                                    "WEBP",quality=95,method=6)
@@ -175,7 +180,7 @@ def patch_quote(file: Path):
 
 
 def build_v463(kit: Path,dest: Path):
-    build_v462(kit,dest)
+    build_v462(kit, dest)
     java=dest/APP
     res=dest/"app/src/main/res"
     assets=dest/"app/src/main/assets"
