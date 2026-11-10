@@ -66,6 +66,15 @@ class ApprovedBrandV462(unittest.TestCase):
                                      Image.Resampling.LANCZOS).getpixel((256,256))[:3],
                                      msg=str(target))
 
+    def test_emulator_launch_targets_current_preview_package(self):
+        """GitHub Actions must launch the APK built from v462, not prior v461."""
+        workflow = (ROOT / ".github/workflows/build-iman-v462.yml").read_text("utf-8")
+        package = "com.xalid.kitabaliman.preview462"
+        activity = "com.xalid.meditsinaproroka.nativeapp.MainActivity"
+        self.assertIn("adb shell am start -W -n " + package + "/" + activity, workflow)
+        self.assertIn("adb shell pidof " + package, workflow)
+        self.assertNotIn("com.xalid.kitabaliman.preview461", workflow)
+
     def test_v461_base_and_user_data_guardrails(self):
         source = (ROOT / "scripts/build_iman_v462.py").read_text("utf-8")
         for needle in ("build_v461(kit, dest)", "preview462",
