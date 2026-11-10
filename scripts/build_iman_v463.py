@@ -155,10 +155,10 @@ def patch_home(file: Path):
 def patch_quote(file: Path):
     text=file.read_text("utf-8")
     replacements=(
-        (".width(if (compactScreen) 80.dp else 99.dp)",
-         ".width(if (compactScreen) 112.dp else 128.dp)"),
-        (".height(if (compactScreen) 86.dp else 103.dp)",
-         ".height(if (compactScreen) 100.dp else 110.dp)"),
+        (".width(if (compactScreen) 80.dp else 99.dp)\n"
+         "                             .height(if (compactScreen) 86.dp else 103.dp)",
+         ".width(if (compactScreen) 112.dp else 128.dp)\n"
+         "                             .height(if (compactScreen) 100.dp else 110.dp)"),
         (".requiredWidth(if (compactScreen) 132.dp else 170.dp)\n"
          "                                .height(if (compactScreen) 86.dp else 103.dp)",
          ".fillMaxSize()"),
