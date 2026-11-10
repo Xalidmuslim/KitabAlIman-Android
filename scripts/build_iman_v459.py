@@ -14,7 +14,7 @@ from PIL import Image
 from scripts.build_iman_v458 import build_v458
 from scripts.build_iman_v20 import APP, NAV, replace_one
 
-APPROVED_HASH = "c82dd7e55f74ffa322daba9ca25918fd4489927cd63316be69e4582cc80a5965"
+APPROVED_HASH = "f9c796e981e63a5f47891c1e2cadcead8f44f98cb6c436689af464f8ac465233"
 
 
 def checksum(p: Path) -> str:
@@ -58,18 +58,17 @@ def build_v459(kit: Path, dest: Path):
         raise RuntimeError("v459 altered reminder actions or following UI")
     quote_file.write_text(original_quote.split(marker)[0]+source, "utf-8")
 
-    from scripts.iman_v459_art_data import APPROVED_WEBP_BASE64
-    art = base64.b64decode(APPROVED_WEBP_BASE64, validate=True)
+    art = (kit/"assets/ui/v459/iman_v459_integrated_manuscript.webp").read_bytes()
     if hashlib.sha256(art).hexdigest() != APPROVED_HASH:
         raise RuntimeError("v459 approved artwork binary digest mismatch")
     target = drawable/"iman_v459_integrated_manuscript.webp"
     with Image.open(io.BytesIO(art)) as img:
-        if img.size != (240, 162) or img.mode != "RGBA":
+        if img.size != (180, 122) or img.mode != "RGBA":
             raise RuntimeError("v459 artwork lost RGBA transparency")
         rgba = img.getchannel("A")
-        if rgba.getextrema()[0] != 0 or max(rgba.crop((0,0,240,1)).getextrema()) > 2:
+        if rgba.getextrema()[0] != 0 or max(rgba.crop((0,0,180,1)).getextrema()) > 2:
             raise RuntimeError("v459 top edge not feathered")
-        if any(rgba.getpixel(c) != 0 for c in ((0,0),(239,0),(0,161),(239,161))):
+        if any(rgba.getpixel(c) != 0 for c in ((0,0),(179,0),(0,121),(179,121))):
             raise RuntimeError("v459 rectangular outline on corners")
     target.write_bytes(art)
     if checksum(target) != APPROVED_HASH:
