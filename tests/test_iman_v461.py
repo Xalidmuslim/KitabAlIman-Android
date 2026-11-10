@@ -7,21 +7,21 @@ import numpy as np
 from PIL import Image
 ROOT=Path(__file__).resolve().parents[1]
 SOURCE=ROOT/"assets/ui/v461/iman_v461_brand_icon.webp"
-HASH="eec657fd77d598f95f4602e0216cfa4d53181b2141d164ff9f9d28b3281ef182"
+HASH="68a4e51a72d51daf06fca7beec07ac20ea97a141050a3cd998436f0f70a00965"
 
 class ContourBrandIconV461(unittest.TestCase):
     def test_asset_has_no_square_backdrop(self):
         self.assertTrue(SOURCE.is_file())
         self.assertEqual(hashlib.sha256(SOURCE.read_bytes()).hexdigest(),HASH)
         with Image.open(SOURCE) as art:
-            self.assertEqual(art.size,(256,256))
+            self.assertEqual(art.size,(160,160))
             self.assertEqual(art.mode,"RGBA")
             a=np.asarray(art.getchannel("A"))
             self.assertEqual(int(a[0,0]),0)
             self.assertEqual(int(a[0,-1]),0)
             self.assertEqual(int(a[-1,0]),0)
             self.assertEqual(int(a[-1,-1]),0)
-            self.assertGreater(int(a[128,128]),250)
+            self.assertGreater(int(a[80,80]),250)
             self.assertLess(float(np.mean(a[:12,:12])),15)
 
     def test_patch_only_home_header_and_more_header(self):
@@ -59,8 +59,8 @@ class ContourBrandIconV461(unittest.TestCase):
                 self.assertEqual(b.mode,"RGBA")
                 self.assertEqual(a.getpixel((0,0))[3],0)
                 self.assertEqual(b.getpixel((0,0))[3],0)
-                self.assertGreater(a.getpixel((256,256))[3],250)
-                self.assertGreater(b.getpixel((256,256))[3],250)
+                self.assertGreater(a.getpixel((160,160))[3],250)
+                self.assertGreater(b.getpixel((160,160))[3],250)
 
     def test_build_maintains_quiz_nav_and_reader(self):
         code=(ROOT/"scripts/build_iman_v461.py").read_text("utf-8")
