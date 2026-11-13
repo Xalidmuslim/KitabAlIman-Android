@@ -147,7 +147,13 @@ jobs:
           assert sum(len(b.get('footnoteOffsets',[])) for b in blocks) == 242
           quiz = json.loads((root/'app/src/main/assets/quiz.json').read_text(encoding='utf-8'))
           assert len(quiz['chapters']) == 131
-          assert sum(len(q) for q in quiz['chapters'].values()) == 524
+          # Reviewed comprehension replaces four recognition questions in 18 chapters.
+          curated = json.loads(Path('assets/quiz_meaning_v472.json').read_text(encoding='utf-8'))
+          assert len(curated['chapters']) == 18
+          assert sum(len(items) for items in curated['chapters'].values()) == 33
+          assert sum(len(q) for q in quiz['chapters'].values()) == 33 + 4 * (131 - 18)
+          assert all(len(quiz['chapters'][chapter]) == 4 for chapter in quiz['chapters'] if chapter not in curated['chapters'])
+          assert all(len(quiz['chapters'][chapter]) == len(records) for chapter, records in curated['chapters'].items())
           src = root/'app/src/main/java/com/xalid/meditsinaproroka/nativeapp'
           reader=(src/'Reader.kt').read_text(encoding='utf-8')
           screens=(src/'Screens.kt').read_text(encoding='utf-8')
