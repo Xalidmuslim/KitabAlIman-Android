@@ -24,7 +24,7 @@ class ManuscriptReminderV465Test(unittest.TestCase):
         script = (ROOT / "scripts/build_iman_v465.py").read_text("utf-8")
         self.assertIn("build_v464(kit, dest)", script)
         self.assertIn("R.drawable.iman_v464_reminder_feathered", script)
-        self.assertIn("R.drawable." + DRAWABLE, script)
+        self.assertIn('"R.drawable." + DRAWABLE', script)
         self.assertIn("navigate(Route.Reader(q.chapterId, q.blockId))", script)
         self.assertIn("versionName '0.46.5'", script)
 
