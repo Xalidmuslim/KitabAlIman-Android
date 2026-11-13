@@ -3,7 +3,7 @@ name: Build Kitab al-Iman v0.46.11 matched library palette
 on:
   push:
     branches:
-      - codex/iman-library-palette-match-v471-20261113
+      - codex/iman-reading-quiz-ux-v472-20261113
   workflow_dispatch:
 
 permissions:
@@ -125,6 +125,23 @@ jobs:
 
       - name: Prepare native v0.46.11 application
         run: python3 -m scripts.build_iman_v471 --dest AndroidApp
+
+      - name: Export current native reader and quiz sources for precise v472 inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: KitabAlIman-v471-Source-Audit
+          path: |
+            AndroidApp/app/src/main/java/com/xalid/meditsinaproroka/nativeapp/Reader.kt
+            AndroidApp/app/src/main/java/com/xalid/meditsinaproroka/nativeapp/FaithStudy.kt
+            AndroidApp/app/src/main/java/com/xalid/meditsinaproroka/nativeapp/ImanQuoteCarousel.kt
+            AndroidApp/app/src/main/java/com/xalid/meditsinaproroka/nativeapp/ModernEditorialHome.kt
+            AndroidApp/app/src/main/java/com/xalid/meditsinaproroka/nativeapp/BookScreen.kt
+            AndroidApp/app/src/main/java/com/xalid/meditsinaproroka/nativeapp/WebDesign.kt
+            AndroidApp/app/src/main/java/com/xalid/meditsinaproroka/nativeapp/Components.kt
+            AndroidApp/app/src/main/java/com/xalid/meditsinaproroka/nativeapp/App.kt
+            AndroidApp/app/src/main/java/com/xalid/meditsinaproroka/nativeapp/ImanV38More.kt
+          if-no-files-found: warn
+          retention-days: 2
 
       - name: Check transformed source and data
         run: |
