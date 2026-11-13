@@ -57,7 +57,7 @@ class MeaningfulReadingStudyTest(unittest.TestCase):
         self.assertIn("controller?.pause()", patch)
         self.assertIn("active.play(chapter)", patch)
         self.assertIn("textButtonColors", patch)
-        self.assertIn("ReaderChapterSpeechBar", patch)
+        self.assertIn("shape = androidx.compose.foundation.shape.RoundedCornerShape(0.dp)", patch)
 
     def test_typography_does_not_rewrite_book_body_or_text(self):
         patch=(ROOT / "scripts/build_iman_v472.py").read_text("utf-8")
