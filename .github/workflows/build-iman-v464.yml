@@ -1,9 +1,9 @@
-name: Build Kitab al-Iman v0.46.10 borderless parchment icon
+name: Build Kitab al-Iman v0.46.11 matched library palette
 
 on:
   push:
     branches:
-      - codex/iman-borderless-icon-v470-20261113
+      - codex/iman-library-palette-match-v471-20261113
   workflow_dispatch:
 
 permissions:
@@ -120,8 +120,11 @@ jobs:
       - name: Borderless 3D icon and exact native paper regression tests
         run: python3 -m unittest discover -s tests -p 'test_iman_v470.py' -v
 
-      - name: Prepare native v0.46.10 application
-        run: python3 -m scripts.build_iman_v470 --dest AndroidApp
+      - name: Compare icon tonal quantiles and existing shadow to all four library images
+        run: python3 -m unittest discover -s tests -p 'test_iman_v471.py' -v
+
+      - name: Prepare native v0.46.11 application
+        run: python3 -m scripts.build_iman_v471 --dest AndroidApp
 
       - name: Check transformed source and data
         run: |
@@ -422,7 +425,7 @@ jobs:
       - name: Publish installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.46.10-Release-APK
+          name: KitabAlIman-v0.46.11-Release-APK
           path: AndroidApp/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 7
@@ -460,49 +463,49 @@ jobs:
             adb shell settings put secure navigation_mode 2 || true
             # Launch the installed native application explicitly; no shell-local
             # variables or platform-dependent mCurrentFocus parsing.
-            adb shell am start -W -n com.xalid.kitabaliman.preview470/com.xalid.meditsinaproroka.nativeapp.MainActivity
+            adb shell am start -W -n com.xalid.kitabaliman.preview471/com.xalid.meditsinaproroka.nativeapp.MainActivity
             sleep 7
-            adb shell pidof com.xalid.kitabaliman.preview470
-            adb shell dumpsys activity activities | grep -F "com.xalid.kitabaliman.preview470" || true
+            adb shell pidof com.xalid.kitabaliman.preview471
+            adb shell dumpsys activity activities | grep -F "com.xalid.kitabaliman.preview471" || true
             sleep 9
             mkdir -p qa
-            adb shell screencap -p /sdcard/iman_v470_home.png
-            adb pull /sdcard/iman_v470_home.png qa/iman_v470_home.png
+            adb shell screencap -p /sdcard/iman_v471_home.png
+            adb pull /sdcard/iman_v471_home.png qa/iman_v471_home.png
             # Rotate through the actual long (179-character) chapter excerpt.
             # Font identity and relief are also asserted on every rendering path above.
             for n in $(seq 1 8); do adb shell input tap 382 105; done
             sleep 2
-            adb shell screencap -p /sdcard/iman_v470_quote_long.png
-            adb pull /sdcard/iman_v470_quote_long.png qa/iman_v470_quote_long.png
+            adb shell screencap -p /sdcard/iman_v471_quote_long.png
+            adb pull /sdcard/iman_v471_quote_long.png qa/iman_v471_quote_long.png
 
             # The remaining screenshots are taken from the installed native APK,
             # not design mockups. All routes share the same bottom navigation.
             adb shell input tap 130 721
             sleep 2
-            adb shell screencap -p /sdcard/iman_v470_contents.png
-            adb pull /sdcard/iman_v470_contents.png qa/iman_v470_contents.png
+            adb shell screencap -p /sdcard/iman_v471_contents.png
+            adb pull /sdcard/iman_v471_contents.png qa/iman_v471_contents.png
             adb shell input tap 215 721
             sleep 2
-            adb shell screencap -p /sdcard/iman_v470_search.png
-            adb pull /sdcard/iman_v470_search.png qa/iman_v470_search.png
+            adb shell screencap -p /sdcard/iman_v471_search.png
+            adb pull /sdcard/iman_v471_search.png qa/iman_v471_search.png
             adb shell input tap 302 721
             sleep 2
-            adb shell screencap -p /sdcard/iman_v470_bookmarks.png
-            adb pull /sdcard/iman_v470_bookmarks.png qa/iman_v470_bookmarks.png
+            adb shell screencap -p /sdcard/iman_v471_bookmarks.png
+            adb pull /sdcard/iman_v471_bookmarks.png qa/iman_v471_bookmarks.png
             adb shell input tap 387 721
             sleep 2
-            adb shell screencap -p /sdcard/iman_v470_more.png
-            adb pull /sdcard/iman_v470_more.png qa/iman_v470_more.png
+            adb shell screencap -p /sdcard/iman_v471_more.png
+            adb pull /sdcard/iman_v471_more.png qa/iman_v471_more.png
             adb shell input tap 396 60
             sleep 2
-            adb shell screencap -p /sdcard/iman_v470_settings.png
-            adb pull /sdcard/iman_v470_settings.png qa/iman_v470_settings.png
+            adb shell screencap -p /sdcard/iman_v471_settings.png
+            adb pull /sdcard/iman_v471_settings.png qa/iman_v471_settings.png
             adb shell input tap 130 721
             sleep 2
             adb shell input tap 185 284
             sleep 2
-            adb shell screencap -p /sdcard/iman_v470_reader.png
-            adb pull /sdcard/iman_v470_reader.png qa/iman_v470_reader.png
+            adb shell screencap -p /sdcard/iman_v471_reader.png
+            adb pull /sdcard/iman_v471_reader.png qa/iman_v471_reader.png
             adb shell input tap 45 721
             sleep 2
 
@@ -511,8 +514,21 @@ jobs:
             adb shell wm density 160
             adb shell settings put system font_scale 1.10
             sleep 2
-            adb shell screencap -p /sdcard/iman_v470_home_small.png
-            adb pull /sdcard/iman_v470_home_small.png qa/iman_v470_home_small.png
+            adb shell screencap -p /sdcard/iman_v471_home_small.png
+            adb pull /sdcard/iman_v471_home_small.png qa/iman_v471_home_small.png
+
+      - name: Validate measured palette regression in real Android assets
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          report=json.loads(Path('AndroidApp/app/build/qa/iman_v471_palette.json').read_text())
+          before=report['mean_rgb_error_before']
+          after=report['mean_rgb_error_after']
+          assert after < before*.82, (before, after)
+          print('Library RGB quantile mismatch:', before, '->', after)
+          print('Library shadow sample:', report['measured_library_shadow_rgb'])
+          PY
 
       - name: Export generated icon and parchment relief for visual review
         if: always()
@@ -532,8 +548,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.46.10-Visual-QA
-          path: qa/iman_v470_*.png
+          name: KitabAlIman-v0.46.11-Visual-QA
+          path: qa/iman_v471_*.png
           if-no-files-found: error
           retention-days: 7
 
@@ -543,9 +559,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          TAG=v0.46.10
+          TAG=v0.46.11
           APK=AndroidApp/app/build/outputs/apk/release/app-release.apk
           if ! gh release view "$TAG" >/dev/null 2>&1; then
-            gh release create "$TAG" --target "$GITHUB_SHA" --title "Книга Имана v0.46.10" --notes "Поставлено изображение пользователя в шапку главного экрана и иконку лаунчера. В разделе «Ещё» убрана только добавленная иллюстрация; шестерёнка и значки списка сохранены. 131 глава и 79 напоминаний на месте."
+            gh release create "$TAG" --target "$GITHUB_SHA" --title "Книга Имана v0.46.11" --notes "Поставлено изображение пользователя в шапку главного экрана и иконку лаунчера. В разделе «Ещё» убрана только добавленная иллюстрация; шестерёнка и значки списка сохранены. 131 глава и 79 напоминаний на месте."
           fi
-          gh release upload "$TAG" "$APK#KitabAlIman-v0.46.10.apk" --clobber
+          gh release upload "$TAG" "$APK#KitabAlIman-v0.46.11.apk" --clobber
