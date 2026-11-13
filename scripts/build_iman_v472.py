@@ -179,9 +179,7 @@ private val LocalQuoteFlash = compositionLocalOf<ReaderQuoteFlash?> { null }
 
 
 def patch_reader_title(source: str) -> str:
-    old='''                    fontFamily = WebLiterataFont,
-                    fontSize = (if (chapter.title.length > 60) 18 else 20).sp,'' '
-    # Correct pinned source without using blind global replacement.
+    # Exact-scoped heading replacement; body reading font remains unchanged.
     old='''                    fontFamily = WebLiterataFont,
                     fontSize = (if (chapter.title.length > 60) 18 else 20).sp,'''
     return one(source, old,
