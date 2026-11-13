@@ -333,6 +333,17 @@ def build_v472(kit: Path, dest: Path) -> None:
     assets=dest/"app/src/main/assets"
     book_before=_digest(assets/"book.json")
     quotes_before=_digest(assets/"featured_quotes.json")
+    book_source=json.loads((assets/"book.json").read_text("utf-8"))
+    all_quotes=json.loads((assets/"featured_quotes.json").read_text("utf-8"))
+    if len(all_quotes)!=79:
+        raise RuntimeError("Featured excerpt inventory unexpectedly changed")
+    chapters={c["id"]:c for c in book_source["chapters"]}
+    for excerpt in all_quotes:
+        match=[block for block in chapters[excerpt["chapterId"]]["blocks"]
+               if block["id"]==excerpt["blockId"]]
+        if len(match)!=1 or excerpt["text"] not in match[0]["text"]:
+            raise RuntimeError("Excerpt cannot be highlighted exactly in native reader")
+
     app_before=_digest(java/"App.kt")
     images=dest/"app/src/main/res/drawable-nodpi"
     image_before={p.name:_digest(p) for p in images.glob("iman_v*.webp")}
