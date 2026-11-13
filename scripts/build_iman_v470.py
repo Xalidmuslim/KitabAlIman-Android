@@ -104,7 +104,6 @@ def build_v470(kit: Path, dest: Path) -> None:
         drawable / "iman_v35_collections.webp",
         drawable / "iman_v35_glossary.webp",
         drawable / "iman_v38_notes.webp",
-        res / "app_icon_ignore_missing",
     ]
     untouched = [p for p in untouched if p.is_file()]
     before = {str(path): _sha(path) for path in untouched}
