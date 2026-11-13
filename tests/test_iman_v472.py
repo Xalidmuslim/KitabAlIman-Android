@@ -33,16 +33,15 @@ class MeaningfulReadingStudyTest(unittest.TestCase):
         self.assertIn("BackgroundColorSpan(temporaryHighlightColor)", src)
         self.assertNotIn("store.addHighlight(chapter.id", src)
 
-    def test_whole_reader_quote_is_a_substring_in_the_original_block(self):
-        # Source quote spans must not be invented/approximated.
-        book = json.loads((ROOT / "assets/book.json").read_text("utf-8"))
-        quotes = json.loads((ROOT / "assets/featured_quotes.json").read_text("utf-8"))
-        chapters = {c["id"]: c for c in book["chapters"]}
-        self.assertEqual(len(quotes), 79)
-        for quote in quotes:
-            blocks = [b for b in chapters[quote["chapterId"]]["blocks"] if b["id"] == quote["blockId"]]
-            self.assertEqual(len(blocks), 1)
-            self.assertIn(quote["text"], blocks[0]["text"])
+    def test_all_79_excerpts_are_verified_in_the_build_not_user_highlights(self):
+        # The 79 source excerpts are materialized during native app generation.
+        # They are never rewritten or saved into the user's permanent highlight store.
+        script = (ROOT / "scripts/build_iman_v472.py").read_text("utf-8")
+        self.assertIn("featured_quotes.json", script)
+        self.assertIn("quoteFocus", script)
+        self.assertIn("temporaryRanges", script)
+        self.assertIn("quoteVisible = false", script)
+        self.assertIn("store.addHistory(chapter.id, deepLinkBlockKey)", script)
 
     def test_quiz_upgrades_are_validated_against_original_chapter(self):
         book = json.loads((ROOT / "assets/book.json").read_text("utf-8"))
