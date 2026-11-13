@@ -1,9 +1,9 @@
-name: Build Kitab al-Iman v0.46.4 soft matte Home and fully feathered reminder
+name: Build Kitab al-Iman v0.46.5 soft matte Home and fully feathered reminder
 
 on:
   push:
     branches:
-      - codex/iman-header-reminder-soft-v464-20261110
+      - codex/iman-manuscript-reminder-v465-20261113
   workflow_dispatch:
 
 permissions:
@@ -87,10 +87,10 @@ jobs:
       - name: Preserve v0.45.7 borderless and warm contrast regressions
         run: python3 -m unittest discover -s tests -p 'test_iman_v457.py' -v
 
-      - name: Verify v0.46.4 discoverable frame-free chapter quiz
+      - name: Verify v0.46.5 discoverable frame-free chapter quiz
         run: python3 -m unittest discover -s tests -p 'test_iman_v459.py' -v
 
-      - name: Verify v0.46.4 approved launcher artwork and contracts
+      - name: Verify v0.46.5 approved launcher artwork and contracts
         run: python3 -m unittest discover -s tests -p 'test_iman_v460.py' -v
 
       - name: Verify seamless Home/launcher, unclipped reminder and unchanged More icons
@@ -102,8 +102,11 @@ jobs:
       - name: Regression tests for feathered arch and toned Home illustration
         run: python3 -m unittest discover -s tests -p 'test_iman_v464.py' -v
 
-      - name: Prepare native v0.46.4 application
-        run: python3 -m scripts.build_iman_v464 --dest AndroidApp
+      - name: Regression tests for manuscript art and exact-fragment navigation
+        run: python3 -m unittest discover -s tests -p 'test_iman_v465.py' -v
+
+      - name: Prepare native v0.46.5 application
+        run: python3 -m scripts.build_iman_v465 --dest AndroidApp
 
       - name: Check transformed source and data
         run: |
@@ -398,7 +401,7 @@ jobs:
       - name: Publish installable APK
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.46.4-Release-APK
+          name: KitabAlIman-v0.46.5-Release-APK
           path: AndroidApp/app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
           retention-days: 7
@@ -436,10 +439,10 @@ jobs:
             adb shell settings put secure navigation_mode 2 || true
             # Launch the installed native application explicitly; no shell-local
             # variables or platform-dependent mCurrentFocus parsing.
-            adb shell am start -W -n com.xalid.kitabaliman.preview464/com.xalid.meditsinaproroka.nativeapp.MainActivity
+            adb shell am start -W -n com.xalid.kitabaliman.preview465/com.xalid.meditsinaproroka.nativeapp.MainActivity
             sleep 7
-            adb shell pidof com.xalid.kitabaliman.preview464
-            adb shell dumpsys activity activities | grep -F "com.xalid.kitabaliman.preview464" || true
+            adb shell pidof com.xalid.kitabaliman.preview465
+            adb shell dumpsys activity activities | grep -F "com.xalid.kitabaliman.preview465" || true
             sleep 9
             mkdir -p qa
             adb shell screencap -p /sdcard/iman_v464_home.png
@@ -508,7 +511,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: KitabAlIman-v0.46.4-Visual-QA
+          name: KitabAlIman-v0.46.5-Visual-QA
           path: qa/iman_v464_*.png
           if-no-files-found: error
           retention-days: 7
@@ -519,9 +522,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          TAG=v0.46.4
+          TAG=v0.46.5
           APK=AndroidApp/app/build/outputs/apk/release/app-release.apk
           if ! gh release view "$TAG" >/dev/null 2>&1; then
-            gh release create "$TAG" --target "$GITHUB_SHA" --title "Книга Имана v0.46.4" --notes "Поставлено изображение пользователя в шапку главного экрана и иконку лаунчера. В разделе «Ещё» убрана только добавленная иллюстрация; шестерёнка и значки списка сохранены. 131 глава и 79 напоминаний на месте."
+            gh release create "$TAG" --target "$GITHUB_SHA" --title "Книга Имана v0.46.5" --notes "Поставлено изображение пользователя в шапку главного экрана и иконку лаунчера. В разделе «Ещё» убрана только добавленная иллюстрация; шестерёнка и значки списка сохранены. 131 глава и 79 напоминаний на месте."
           fi
-          gh release upload "$TAG" "$APK#KitabAlIman-v0.46.4.apk" --clobber
+          gh release upload "$TAG" "$APK#KitabAlIman-v0.46.5.apk" --clobber
