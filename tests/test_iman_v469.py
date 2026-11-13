@@ -22,7 +22,7 @@ class LatestIconPaperMatch469(unittest.TestCase):
         self.assertEqual(hashlib.sha256(payload).hexdigest(), SHA256_ICON)
         with Image.open(io.BytesIO(payload)) as im:
             self.assertEqual(im.format, "WEBP")
-            self.assertEqual(im.size, (256, 256))
+            self.assertEqual(im.size, (192, 192))
 
     def test_parchment_uses_real_page_paper_not_old_flat_color(self):
         with tempfile.TemporaryDirectory() as d:
