@@ -47,7 +47,7 @@ class BorderlessIconV470Tests(unittest.TestCase):
         art = read_approved(ROOT)
         with tempfile.TemporaryDirectory() as d:
             paper = Path(d) / "native.webp"
-            Image.new("RGB", (200, 250), (246, 236, 217)).save(paper, "WEBP")
+            Image.new("RGB", (200, 250), (246, 236, 217)).save(paper, "WEBP", lossless=True)
             background, color = native_paper_texture(paper)
             self.assertEqual(background.size, (512, 512))
             header, adaptive, legacy = render_icons(art, background)
@@ -66,7 +66,7 @@ class BorderlessIconV470Tests(unittest.TestCase):
     def test_preserves_book_and_quote_content_in_build(self):
         src = (ROOT / "scripts/build_iman_v470.py").read_text("utf-8")
         for token in ("build_v469(kit, dest)", "versionCode 70",
-                      "versionName '0.47.0'", "preview470",
+                      "versionName '0.46.10'", "preview470",
                       "book.json", "quiz.json", "featured_quotes.json",
                       "ImanQuoteCarousel.kt", "iman_v465_scroll.webp",
                       "iman_v470_launcher_background.webp",
