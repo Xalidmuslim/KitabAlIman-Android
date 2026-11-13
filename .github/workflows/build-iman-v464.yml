@@ -192,7 +192,7 @@ jobs:
           assert 'LinearProgressIndicator(' in home_v30
           assert 'Brush.horizontalGradient' not in home_v30
           assert 'border = null' in quote_v30 and 'shadowElevation = 0.dp' in quote_v30
-          assert 'R.drawable.iman_v464_reminder_feathered' in quote_v30
+          assert 'R.drawable.iman_v465_scroll' in quote_v30
           assert 'R.drawable.iman_v42_manuscript_qalam' not in quote_v30
           art=root/'app/src/main/res/drawable-nodpi/iman_v43_approved_scroll.webp'
           assert art.stat().st_size > 3000
@@ -277,7 +277,7 @@ jobs:
           assert 'height(22.dp)' in stats and 'height(32.dp)' not in stats
           assert 'Text("$minutes"' in stats and 'dayNames[index]' in stats
           assert 'screenHeightDp >= 820' in stats and 'screenHeightDp >= 820' in home_v30
-          assert 'R.drawable.iman_v464_reminder_feathered' in quote_v30
+          assert 'R.drawable.iman_v465_scroll' in quote_v30
           assert (root/'app/src/main/res/drawable-nodpi/iman_v41_engraving.webp').stat().st_size > 1000
           assert '22.5.sp' in quote_v30 and '20.5.sp' in quote_v30
           assert '19.sp' in quote_v30 and '17.5.sp' in quote_v30
@@ -287,13 +287,13 @@ jobs:
           assert 'R.drawable.medicine_launcher_book' not in home_v30
           assert 'fontFamily = ImanCaveatFont' in quote_v30
           assert 'fontFamily = if (length' not in quote_v30
-          assert 'R.drawable.iman_v464_reminder_feathered' in quote_v30
+          assert 'R.drawable.iman_v465_scroll' in quote_v30
           assert 'if (showIllustration)' not in quote_v30
           assert (root/'app/src/main/res/drawable-nodpi/iman_v39_relief.webp').stat().st_size > 1000
           assert (root/'app/src/main/res/drawable-nodpi/iman_v463_header.webp').stat().st_size > 1000
           assert (root/'app/src/main/res/drawable-nodpi/iman_v463_reminder_depth.webp').stat().st_size > 1000
           assert (root/'app/src/main/res/drawable-nodpi/iman_v464_home_soft.webp').stat().st_size > 1000
-          assert (root/'app/src/main/res/drawable-nodpi/iman_v464_reminder_feathered.webp').stat().st_size > 1000
+          assert (root/'app/src/main/res/drawable-nodpi/iman_v465_scroll.webp').stat().st_size > 1000
           assert '.offset(y = (0).dp)' in quote_v30
           assert 'heightIn(min = if (compactScreen) 108.dp else 117.dp)' in quote_v30
           assert '.offset(y = (-3).dp)' not in quote_v30
