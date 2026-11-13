@@ -92,7 +92,7 @@ def _digest(path: Path) -> str:
 
 
 def build_v469(kit: Path, dest: Path) -> None:
-    build_v468(kit,dest)
+    build_v468(kit, dest)
     res=dest/"app/src/main/res"
     drawable=res/"drawable-nodpi"
     java=dest/APP
