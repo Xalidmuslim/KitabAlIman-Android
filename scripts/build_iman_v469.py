@@ -17,7 +17,7 @@ from scripts.build_iman_v468 import build_v468
 from scripts.build_iman_v20 import APP, replace_one
 
 ICON_V469 = "assets/ui/v469/latest_iman_icon.webp.b64"
-SHA256_ICON = "a9b665dc30b069709e3e34b066c35119f777550c77893486009ced639b0593a9"
+SHA256_ICON = "28a87ea17e13dfda27a4470e860f4478f900da5b1e5d86add19f2abfdcc45448"
 
 
 def sample_icon(kit: Path) -> Image.Image:
@@ -25,7 +25,7 @@ def sample_icon(kit: Path) -> Image.Image:
     if hashlib.sha256(raw).hexdigest() != SHA256_ICON:
         raise RuntimeError("Latest user-approved icon bytes altered")
     with Image.open(io.BytesIO(raw)) as source:
-        if source.format != "WEBP" or source.size != (256,256):
+        if source.format != "WEBP" or source.size != (192,192):
             raise RuntimeError("Approved icon format or dimensions changed")
         return source.convert("RGB").copy()
 
@@ -52,7 +52,9 @@ def _smoothstep(values):
 
 
 def render_matching_icon(original: Image.Image, paper: tuple[int, int, int]):
-    if original.size != (256,256):
+    if original.size == (192,192):
+        original=original.resize((256,256),Image.Resampling.LANCZOS)
+    elif original.size != (256,256):
         raise RuntimeError("Unexpected approved icon size")
     rgba=np.asarray(original.convert("RGB"),dtype=np.float32).copy()
     luminance=rgba @ np.array([.2126,.7152,.0722],dtype=np.float32)
@@ -114,7 +116,7 @@ def build_v469(kit: Path, dest: Path) -> None:
     if not colors.is_file():
         raise RuntimeError("Launcher adaptive icon background resource missing")
     new_color=f'#{paper[0]:02X}{paper[1]:02X}{paper[2]:02X}'
-    color_xml=f'<resources><color name="iman_v39_icon_background">{new_color}</color></resources>\\n'
+    color_xml=f'<resources><color name="iman_v39_icon_background">{new_color}</color></resources>'
     colors.write_text(color_xml,encoding="utf-8")
 
     home=(java/"ModernEditorialHome.kt").read_text("utf-8")
