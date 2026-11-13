@@ -297,9 +297,15 @@ def validate_curated_questions(book: dict, dataset: dict) -> dict:
             ref=blocks.get(item["anchor"])
             if ref is None:
                 raise RuntimeError("Quiz evidence anchor not in chapter " + item["id"])
-            hint=item["sourceExcerpt"].strip()
-            if len(hint)<23 or hint not in ref["text"]:
-                raise RuntimeError("Quiz excerpt is not exact source text " + item["id"])
+            hint=item.get("sourceHint", "").strip()
+            if len(hint)<12 or hint not in ref["text"]:
+                raise RuntimeError("Quiz source hint is not in actual paragraph " + item["id"])
+            position=ref["text"].index(hint)
+            start=max(0, position-28)
+            end=min(len(ref["text"]), position+len(hint)+115)
+            item["sourceExcerpt"]=ref["text"][start:end].strip()
+            if len(item["sourceExcerpt"])<23:
+                raise RuntimeError("Quiz excerpt too short " + item["id"])
             if item["options"][item["correctIndex"]] not in item["options"]:
                 raise RuntimeError("Invalid correct choice")
     return {"chapters":len(upgraded),"questions":total,"invalid":0}
